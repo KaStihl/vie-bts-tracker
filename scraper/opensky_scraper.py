@@ -217,8 +217,10 @@ if __name__ == "__main__":
     from collections import Counter
     by_airline = Counter(m["airline"] for m in results)
     by_airport = Counter(m["airport_code"] for m in results)
+    by_direction = Counter(m["direction"] for m in results)
     print("By airline:", dict(by_airline))
     print("By airport:", dict(by_airport))
+    print("By direction:", dict(by_direction))
 
     for m in results[:5]:
         print(m)
