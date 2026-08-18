@@ -1,0 +1,40 @@
+# Weekly automated scrape run. NOT active yet by default -- enable this once
+# you've manually verified a few months of data and trust the parsing.
+#
+# NOTE on weekly vs monthly: VIE and BTS only PUBLISH official traffic stats
+# once a month, so most weekly runs will just re-confirm the same monthly
+# figures (harmless -- the upsert is idempotent). The real benefit of a
+# weekly cadence is catching new BTS route-announcement news faster and
+# keeping OpenSky movement data current, not getting new monthly numbers
+# more often. Runs every Monday at 06:00 UTC.
+
+name: Weekly traffic scrape
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {}  # allows manual trigger from GitHub UI too
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python -m scraper.main
+
+      - name: Commit updated data
+        run: |
+          git config user.name "traffic-scraper-bot"
+          git config user.email "actions@github.com"
+          git add scraper/traffic.db scraper/exports/
+          git diff --staged --quiet || git commit -m "Monthly data refresh $(date +%Y-%m-%d)"
+          git push

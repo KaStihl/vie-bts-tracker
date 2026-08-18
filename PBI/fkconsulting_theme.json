@@ -1,0 +1,36 @@
+{
+  "name": "FKConsulting",
+  "dataColors": [
+    "#0F2A4A",
+    "#4FC3BC",
+    "#C9A648",
+    "#2CA6A4",
+    "#8A8578",
+    "#1B4266",
+    "#7DD4CC",
+    "#E0B94D"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#0F2A4A",
+  "tableAccent": "#4FC3BC",
+  "good": "#2CA6A4",
+  "neutral": "#C9A648",
+  "bad": "#B85C5C",
+  "maximum": "#0F2A4A",
+  "center": "#8A8578",
+  "minimum": "#F5F1E8",
+  "textClasses": {
+    "callout": { "fontSize": 45, "fontFace": "Segoe UI" },
+    "title": { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#0F2A4A" },
+    "header": { "fontSize": 12, "fontFace": "Segoe UI Semibold" },
+    "label": { "fontSize": 10, "fontFace": "Segoe UI" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "show": false }],
+        "border": [{ "show": false }]
+      }
+    }
+  }
+}
