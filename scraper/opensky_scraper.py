@@ -1,6 +1,12 @@
 """
-Scraper for aircraft movements (departures/arrivals) by airline at LOWW (Vienna)
-and LZIB (Bratislava), using OpenSky Network's REST API.
+Scraper for aircraft DEPARTURES by airline at LOWW (Vienna) and LZIB
+(Bratislava), using OpenSky Network's REST API.
+
+ARRIVALS are handled separately in opensky_arrivals.py -- confirmed live
+(2026-08) that OpenSky's /flights/arrival endpoint only returns data for
+windows more than ~24h old (batch-processed overnight), while /flights/
+departure works for recent windows. See opensky_arrivals.py docstring for
+details.
 
 Unlike the passenger-count scrapers, this does NOT give you passenger totals --
 it gives MOVEMENT COUNTS per airline (via callsign prefix), which is what lets
@@ -111,9 +117,13 @@ def fetch_window(
 
 def capture_recent(client_id: str, client_secret: str) -> list[dict]:
     """
-    Captures the last CAPTURE_WINDOW_MINUTES of departures/arrivals for VIE
-    and BTS. Designed to be run frequently (roughly hourly) rather than
-    backfilling history -- see module docstring for why.
+    Captures the last CAPTURE_WINDOW_MINUTES of DEPARTURES for VIE and BTS.
+    Designed to be run frequently (roughly hourly).
+
+    NOTE: arrivals are deliberately NOT attempted here -- confirmed live that
+    OpenSky's /flights/arrival endpoint 404s for any "recent" window (batch
+    processed overnight, only available from ~24h+ old). See
+    opensky_arrivals.py for the separate daily arrivals capture.
     """
     token = get_access_token(client_id, client_secret)
     movements: list[Movement] = []
@@ -122,29 +132,24 @@ def capture_recent(client_id: str, client_secret: str) -> list[dict]:
     begin = now - CAPTURE_WINDOW_MINUTES * 60
 
     for our_code, icao in AIRPORTS.items():
-        for direction in ("departure", "arrival"):
-            flights = fetch_window(token, icao, begin, now, direction)
-            for f in flights:
-                callsign = (f.get("callsign") or "").strip()
-                ts = f["firstSeen"] if direction == "departure" else f["lastSeen"]
-                other_airport = (
-                    f.get("estArrivalAirport") if direction == "departure"
-                    else f.get("estDepartureAirport")
+        flights = fetch_window(token, icao, begin, now, "departure")
+        for f in flights:
+            callsign = (f.get("callsign") or "").strip()
+            other_airport = f.get("estArrivalAirport")
+            movements.append(
+                Movement(
+                    airport_code=our_code,
+                    icao=icao,
+                    direction="departure",
+                    callsign=callsign,
+                    airline=resolve_airline(callsign),
+                    other_airport=other_airport,
+                    icao24=f.get("icao24", ""),
+                    movement_time=datetime.fromtimestamp(f["firstSeen"], tz=timezone.utc),
+                    source_url=f"{API_BASE}/flights/departure?airport={icao}",
                 )
-                movements.append(
-                    Movement(
-                        airport_code=our_code,
-                        icao=icao,
-                        direction=direction,
-                        callsign=callsign,
-                        airline=resolve_airline(callsign),
-                        other_airport=other_airport,
-                        icao24=f.get("icao24", ""),
-                        movement_time=datetime.fromtimestamp(ts, tz=timezone.utc),
-                        source_url=f"{API_BASE}/flights/{direction}?airport={icao}",
-                    )
-                )
-            time.sleep(SLEEP_BETWEEN_CALLS)
+            )
+        time.sleep(SLEEP_BETWEEN_CALLS)
 
     return [asdict(m) for m in movements]
 
@@ -210,17 +215,15 @@ if __name__ == "__main__":
             "PowerShell: $env:OPENSKY_CLIENT_ID='...'; $env:OPENSKY_CLIENT_SECRET='...'"
         )
 
-    print(f"Capturing last {CAPTURE_WINDOW_MINUTES} minutes of VIE/BTS movements...")
+    print(f"Capturing last {CAPTURE_WINDOW_MINUTES} minutes of VIE/BTS DEPARTURES...")
     results = capture_recent(client_id, client_secret)
-    print(f"Fetched {len(results)} movements.")
+    print(f"Fetched {len(results)} departures.")
 
     from collections import Counter
     by_airline = Counter(m["airline"] for m in results)
     by_airport = Counter(m["airport_code"] for m in results)
-    by_direction = Counter(m["direction"] for m in results)
     print("By airline:", dict(by_airline))
     print("By airport:", dict(by_airport))
-    print("By direction:", dict(by_direction))
 
     for m in results[:5]:
         print(m)

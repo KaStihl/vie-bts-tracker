@@ -1,0 +1,29 @@
+# Daily capture of arrivals (48h-24h ago window) -- see opensky_arrivals.py
+# docstring for why this can't be hourly like departures.
+
+name: Daily OpenSky arrivals capture
+
+on:
+  schedule:
+    - cron: "45 4 * * *"   # 04:45 UTC, staggered from the backfill job (03:30)
+  workflow_dispatch: {}
+
+jobs:
+  capture-arrivals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Capture arrivals
+        env:
+          OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
+          OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
+          SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+        run: python -m scraper.opensky_arrivals
