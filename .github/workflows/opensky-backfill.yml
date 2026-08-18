@@ -1,0 +1,31 @@
+# Daily backfill of other_airport for movements that have had time to land.
+# Runs once/day (not hourly like the main capture) -- checking a flight more
+# often than daily doesn't help it resolve any faster, and this keeps API
+# credit usage predictable.
+
+name: Daily OpenSky backfill
+
+on:
+  schedule:
+    - cron: "30 3 * * *"   # 03:30 UTC, quiet hours, well clear of the hourly capture
+  workflow_dispatch: {}
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run backfill
+        env:
+          OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
+          OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
+          SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+        run: python -m scraper.opensky_backfill
