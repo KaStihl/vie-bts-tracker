@@ -31,8 +31,10 @@ BACKFILL_MIN_AGE_HOURS = 12   # only attempt movements at least this old
 BACKFILL_MAX_AGE_DAYS = 7     # give up beyond this (older flights are
                                # unlikely to resolve, and it's not worth the
                                # API credits to keep re-checking indefinitely)
-BATCH_LIMIT = 200             # cap how many NULL rows one run attempts,
-                               # to keep daily credit usage predictable
+BATCH_LIMIT = 50              # cap how many NULL rows one run attempts,
+                               # to keep daily credit usage predictable and
+                               # leave headroom for the hourly capture job
+                               # sharing the same account's daily budget
 SLEEP_BETWEEN_CALLS = 2
 
 
@@ -59,6 +61,8 @@ def fetch_flights_for_aircraft(token: str, icao24: str, begin: int, end: int) ->
     )
     if resp.status_code == 404:
         return []
+    if resp.status_code == 429:
+        raise RuntimeError("RATE_LIMITED")
     resp.raise_for_status()
     return resp.json()
 
@@ -103,7 +107,15 @@ def run_backfill(client_id: str, client_secret: str, connection_string: str) -> 
                 window_begin = int((row["movement_time"] - timedelta(hours=1)).timestamp())
                 window_end = int((row["movement_time"] + timedelta(hours=8)).timestamp())
 
-                flights = fetch_flights_for_aircraft(token, row["icao24"], window_begin, window_end)
+                try:
+                    flights = fetch_flights_for_aircraft(token, row["icao24"], window_begin, window_end)
+                except RuntimeError as e:
+                    if str(e) == "RATE_LIMITED":
+                        print(f"\nStopping early: daily credit budget exhausted after {checked} rows "
+                              f"checked. Progress so far is saved. Next scheduled run will continue "
+                              f"with the remaining candidates.")
+                        break
+                    raise
                 time.sleep(SLEEP_BETWEEN_CALLS)
 
                 match = next(
