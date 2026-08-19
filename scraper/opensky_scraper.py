@@ -109,8 +109,16 @@ def fetch_window(
     params = {"airport": icao, "begin": begin, "end": end}
 
     resp = requests.get(url, headers=headers, params=params, timeout=60)
+    remaining = resp.headers.get("X-Rate-Limit-Remaining")
+    if remaining is not None:
+        print(f"  [credits remaining: {remaining}]")
     if resp.status_code == 404:
         return []  # no flights in this window -- normal, not an error
+    if resp.status_code == 429:
+        # Daily credit budget exhausted (shared across all scripts on this
+        # account -- see opensky_historical_backfill.py). Not a bug, just
+        # means this run gets skipped; next scheduled run will catch up.
+        raise RuntimeError("RATE_LIMITED")
     resp.raise_for_status()
     return resp.json()
 
@@ -216,7 +224,15 @@ if __name__ == "__main__":
         )
 
     print(f"Capturing last {CAPTURE_WINDOW_MINUTES} minutes of VIE/BTS DEPARTURES...")
-    results = capture_recent(client_id, client_secret)
+    try:
+        results = capture_recent(client_id, client_secret)
+    except RuntimeError as e:
+        if str(e) == "RATE_LIMITED":
+            print("Skipped this run: daily OpenSky credit budget is temporarily exhausted "
+                  "(shared across hourly/daily jobs on this account). Next scheduled run "
+                  "will pick back up once credits reset.")
+            raise SystemExit(0)  # exit cleanly, not a real failure
+        raise
     print(f"Fetched {len(results)} departures.")
 
     from collections import Counter
