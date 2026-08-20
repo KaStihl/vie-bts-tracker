@@ -31,10 +31,13 @@ def run() -> None:
         print(f"  Year {yr}: found {len(yr_candidates)} candidate press releases.")
         all_candidates.extend(c.__dict__ for c in yr_candidates)
 
-    db.insert_bts_candidates(conn, all_candidates)
-    print(f"Stored {len(all_candidates)} BTS monthly CANDIDATES (verified=0, month=NULL).")
-    print("--> In Supabase, check monthly_traffic WHERE airport_code='BTS' AND verified=0,")
-    print("    read raw_text, then UPDATE month and verified=1 for each.")
+    resolved_count, unresolved_count = db.insert_bts_candidates(conn, all_candidates)
+    print(f"Stored {len(all_candidates)} BTS monthly candidates total:")
+    print(f"  {resolved_count} auto-resolved (clear month name found -> verified=1 directly)")
+    print(f"  {unresolved_count} need manual review (ambiguous/no month name -> verified=0)")
+    if unresolved_count:
+        print("--> In Supabase, check monthly_traffic WHERE airport_code='BTS' AND verified=0,")
+        print("    read raw_text, then UPDATE month and verified=1 for each.")
 
     export_dir = Path(__file__).parent / "exports"
     db.export_csv(conn, export_dir)

@@ -52,15 +52,21 @@ def upsert_vie_monthly(conn, records: list[dict]) -> None:
 
 
 def insert_bts_candidates(conn, records: list[dict]) -> None:
-    # Candidates go in with verified=0 and month=NULL (a human confirms the
-    # month later by reading raw_text, then UPDATEs month + verified=1).
-    # NOTE: since month is NULL, the UNIQUE(airport_code,year,month)
-    # constraint never actually catches duplicates here (Postgres treats
-    # every NULL as distinct) -- re-running for the same year can insert the
-    # same candidate again. Same limitation existed in the SQLite version;
-    # harmless, just means occasional duplicate candidates to review.
-    rows = [
-        {
+    # If bts_scraper.py's infer_month() found exactly one clear month name
+    # in the article text, we trust it and write directly with verified=1 --
+    # via proper ON CONFLICT upsert, so re-running the scraper for the same
+    # year is now idempotent for these (no more duplicate rows).
+    #
+    # If no single clear month was found, fall back to the original
+    # behavior: verified=0, month=NULL, left for manual review in Supabase.
+    # NOTE: for these NULL-month rows, the UNIQUE(airport_code,year,month)
+    # constraint doesn't catch duplicates (Postgres treats every NULL as
+    # distinct) -- re-running can still insert the same unresolved candidate
+    # again. Harmless, just something to dedupe manually before UPDATE-ing.
+    resolved = []
+    unresolved = []
+    for r in records:
+        row = {
             "airport_code": r["airport_code"],
             "year": int(r["published_date"][-4:]),
             "passengers": r["passengers_mentioned"],
@@ -68,10 +74,35 @@ def insert_bts_candidates(conn, records: list[dict]) -> None:
             "source_url": r["article_url"],
             "raw_text": f"{r['title']} | {r['context_sentence']}",
         }
-        for r in records
-    ]
+        if r.get("inferred_month") is not None:
+            row["month"] = r["inferred_month"]
+            resolved.append(row)
+        else:
+            unresolved.append(row)
+
     with conn.cursor() as cur:
-        for row in rows:
+        if resolved:
+            psycopg2.extras.execute_values(
+                cur,
+                """
+                INSERT INTO monthly_traffic
+                    (airport_code, year, month, passengers, yoy_change_pct, verified, source_url, raw_text)
+                VALUES %s
+                ON CONFLICT (airport_code, year, month) DO UPDATE SET
+                    passengers = excluded.passengers,
+                    yoy_change_pct = excluded.yoy_change_pct,
+                    verified = 1,
+                    source_url = excluded.source_url,
+                    raw_text = excluded.raw_text,
+                    scraped_at = NOW()
+                """,
+                [
+                    (r["airport_code"], r["year"], r["month"], r["passengers"],
+                     r["yoy_change_pct"], 1, r["source_url"], r["raw_text"])
+                    for r in resolved
+                ],
+            )
+        for row in unresolved:
             cur.execute(
                 """
                 INSERT INTO monthly_traffic
@@ -81,6 +112,7 @@ def insert_bts_candidates(conn, records: list[dict]) -> None:
                 row,
             )
     conn.commit()
+    return len(resolved), len(unresolved)
 
 
 def upsert_bts_annual(conn, records: list[dict]) -> None:
