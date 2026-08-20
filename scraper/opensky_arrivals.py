@@ -75,7 +75,15 @@ if __name__ == "__main__":
         )
 
     print("Capturing arrivals for the window 48h-24h ago...")
-    results = capture_yesterday_arrivals(client_id, client_secret)
+    try:
+        results = capture_yesterday_arrivals(client_id, client_secret)
+    except RuntimeError as e:
+        if str(e) == "RATE_LIMITED":
+            print("Skipped this run: daily OpenSky credit budget is temporarily exhausted "
+                  "(shared across hourly/daily jobs on this account). Next scheduled run "
+                  "will pick back up once credits reset.")
+            raise SystemExit(0)  # exit cleanly, not a real failure
+        raise
     print(f"Fetched {len(results)} arrivals.")
 
     from collections import Counter
