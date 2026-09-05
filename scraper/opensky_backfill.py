@@ -31,7 +31,7 @@ BACKFILL_MIN_AGE_HOURS = 12   # only attempt movements at least this old
 BACKFILL_MAX_AGE_DAYS = 7     # give up beyond this (older flights are
                                # unlikely to resolve, and it's not worth the
                                # API credits to keep re-checking indefinitely)
-BATCH_LIMIT = 50              # cap how many NULL rows one run attempts,
+BATCH_LIMIT = 150              # cap how many NULL rows one run attempts,
                                # to keep daily credit usage predictable and
                                # leave headroom for the hourly capture job
                                # sharing the same account's daily budget
