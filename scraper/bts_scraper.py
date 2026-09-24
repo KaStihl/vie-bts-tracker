@@ -37,11 +37,18 @@ STATS_URL = "https://www.bts.aero/en/airport/press/statistics/"
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; FKConsultingBot/0.1; +https://fkconsulting.example)"}
 
 # Looks for "<number> ... passengers ... <sign><number>% ... increase"
+#
+# NOTE: `middle` deliberately spans sentence boundaries (allows periods) --
+# BTS sometimes puts the percentage in the same sentence ("...510,152
+# passengers..., representing an 81% increase...") and sometimes in the
+# next one ("...625,742 arriving and departing passengers. This represents
+# a 76% increase..."). Safe to allow full stops here since `middle` is only
+# ever matched within a single already-split article `block`.
 CANDIDATE_PATTERN = re.compile(
     r"(?P<pax>[\d]{2,3}(?:,\d{3})+)\s*(?:arriving and departing\s*)?passengers"
-    r"(?P<middle>[^.]{0,80}?)"
+    r"(?P<middle>.{0,150}?)"
     r"(?P<pct>\d{1,3})%\s*increase",
-    re.IGNORECASE,
+    re.IGNORECASE | re.DOTALL,
 )
 
 MONTH_NAMES = {
