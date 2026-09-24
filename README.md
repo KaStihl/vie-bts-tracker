@@ -5,8 +5,7 @@ Bratislava (BTS) airports, built to examine how low-cost carrier capacity has
 shifted between the two following Austria's aviation tax and Wizz Air's exit
 from Vienna in March 2026.
 
-**Live dashboard:** [fkconsult.eu/dashboard](https://fkconsult.eu/dashboard) *(update with actual path)*
-**Built by:** [FK Consult](https://fkconsult.eu) — BI consulting & analytics
+
 
 ---
 
