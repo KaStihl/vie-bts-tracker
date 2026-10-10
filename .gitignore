@@ -1,0 +1,25 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local-only data (the source of truth is Supabase)
+scraper/traffic.db
+scraper/exports/
+
+# Secrets / local config
+.env
+*.env
+.secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Power BI local artefacts
+*.pbix.bak
+~$*
