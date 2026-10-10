@@ -1,0 +1,163 @@
+/// Official monthly passenger counts from airport press releases (VIE) and press releases / annual report (BTS).
+table 'public monthly_traffic'
+	lineageTag: 5c067abb-4acf-49c0-be8c-98b71d7eb61c
+
+	column id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5c4b4ade-a008-4f8e-91a3-96b4616d44d1
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column airport_code
+		dataType: string
+		lineageTag: 922a247f-ca1a-4ee4-ac12-90b7ed10bc7d
+		summarizeBy: none
+		sourceColumn: airport_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 77de17a4-765d-429c-b187-362e19745db5
+		summarizeBy: none
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_number
+		dataType: int64
+		formatString: 0
+		lineageTag: ebc8e27d-e8bb-4bc5-8daf-d41567fe9ea1
+		summarizeBy: none
+		sourceColumn: month_number
+
+		annotation SummarizationSetBy = Automatic
+
+	column passengers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 32229544-a078-4525-a8a8-74af6d24fa1e
+		summarizeBy: sum
+		sourceColumn: passengers
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Year-over-year change as published, in percent units (-5.9 means -5.9 %). Use the [YoY Change PAX %] measure for display.
+	column yoy_change_pct
+		dataType: double
+		formatString: 0.0"%"
+		lineageTag: babc08e7-2ba2-49e0-8514-92d2e5f6ac10
+		summarizeBy: none
+		sourceColumn: yoy_change_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_passengers
+		dataType: int64
+		formatString: #,0
+		lineageTag: 48db1787-176e-4a50-8198-81f3c34faee3
+		summarizeBy: sum
+		sourceColumn: group_passengers
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_yoy_pct
+		dataType: double
+		formatString: 0.0"%"
+		lineageTag: d4fa21fa-6a91-43a9-a568-9108a7c82db8
+		summarizeBy: none
+		sourceColumn: group_yoy_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column verified
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 4a521018-a3a5-4f86-a5a0-c60ec33f0895
+		summarizeBy: none
+		sourceColumn: verified
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_url
+		dataType: string
+		isHidden
+		lineageTag: f5cca954-c2b7-43ca-8ceb-0649c62e7df1
+		summarizeBy: none
+		sourceColumn: source_url
+
+		annotation SummarizationSetBy = Automatic
+
+	column raw_text
+		dataType: string
+		isHidden
+		lineageTag: 3210c0cf-32ac-46f0-b5a5-f9455c0e8221
+		summarizeBy: none
+		sourceColumn: raw_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column scraped_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 716bcaaf-8078-4d1f-96d0-b967936aa1c3
+		summarizeBy: none
+		sourceColumn: scraped_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_helper
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: 3f97330f-1184-4536-a723-0990589b8c42
+		summarizeBy: none
+		sourceColumn: Month_helper
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 23a67b37-495e-4a7f-ad01-8323ce86f108
+		summarizeBy: none
+		sourceColumn: Month Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date = IF(ISBLANK('public monthly_traffic'[month_number]), BLANK(), DATE('public monthly_traffic'[year], 'public monthly_traffic'[month_number], 1))
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1f43e858-053f-4b2a-ab25-5c41e7251438
+		summarizeBy: none
+		isDataTypeInferred
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'public monthly_traffic' = m
+		mode: import
+		source =
+				let
+				    Source = PostgreSQL.Database("aws-0-eu-central-1.pooler.supabase.com", "postgres"),
+				    public_monthly_traffic = Source{[Schema="public",Item="monthly_traffic"]}[Data],
+				    #"Renamed Columns" = Table.RenameColumns(public_monthly_traffic,{{"month", "month_number"}}),
+				    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Month_helper", each if [month_number] = null then null else Date.ToText(#date(2000, [month_number], 1))),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Added Custom",{{"Month_helper", type date}}),
+				    #"Inserted Month Name" = Table.AddColumn(#"Changed Type", "Month Name", each Date.MonthName([Month_helper]), type text)
+				in
+				    #"Inserted Month Name"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

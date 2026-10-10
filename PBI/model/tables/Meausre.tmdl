@@ -1,0 +1,366 @@
+/// Measure container. NOTE: the name is a typo of 'Measures' but report visuals reference it - rename it in Power BI Desktop (Model view), which updates visuals automatically.
+table Meausre
+	lineageTag: 5980967d-8e83-4b67-b497-ce932a73b583
+
+	measure 'Total Movements' = COUNTROWS('public carrier_movements')
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: 9d78bf79-9b05-4137-b4cf-77e9c4a29f85
+
+	measure 'Departures Only' = ```
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[direction] = "departure")
+			
+			```
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: e78dd81e-2323-4ac6-ad1c-64fa1c350ced
+
+	measure 'Movements Ryanair' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airline] = "Ryanair")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: 63151716-1315-4968-92ca-3fe0a91c94e8
+
+	measure 'Movements Wizz Air' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airline] = "Wizz Air")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: d41ca6e3-e9ec-4b9d-900f-4b1faac46f02
+
+	measure 'Movements Austrian' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airline] = "Austrian Airlines")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: d29e607b-5cc6-40ee-9225-b6ec81b8a29e
+
+	measure 'Movements Other' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airline] = "OTHER")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: e3dff957-c22e-4079-b879-cb498ed13886
+
+	measure '% Share of Movements' =
+			
+			DIVIDE([Total Movements], CALCULATE([Total Movements], ALL('public carrier_movements'[airline])))
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: carrier_movements
+		lineageTag: 49f0d405-ff54-4fde-bc5b-416cbd05dd04
+
+	measure 'LCC Share (Ryanair+Wizz)' =
+			
+			DIVIDE([Movements Ryanair] + [Movements Wizz Air], [Total Movements])
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: carrier_movements
+		lineageTag: d5010612-4836-4b66-9054-5a12593ecc61
+
+	measure 'Days Tracked' =
+			
+			DATEDIFF(MIN('public carrier_movements'[movement_time]), MAX('public carrier_movements'[movement_time]), DAY) + 1
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: 9fa239f8-d107-4275-b97a-6449d8b4beb8
+
+	measure 'Movements MTD' = TOTALMTD([Total Movements], DateTable[Date])
+		dataType: int64
+		formatString: 0
+		displayFolder: time_intelligence
+		lineageTag: 88c47022-e56b-4c5d-83a1-9f57c9cfc019
+
+	measure 'Movements Previous Month' =
+			
+			CALCULATE([Total Movements], DATEADD(DateTable[Date], -1, MONTH))
+		dataType: int64
+		formatString: 0
+		displayFolder: time_intelligence
+		lineageTag: f026533f-3de6-4d3c-9bdb-4fd0abec4e1b
+
+	measure 'MoM %' =
+			
+			DIVIDE([Total Movements] - [Movements Previous Month], [Movements Previous Month])
+		dataType: double
+		displayFolder: time_intelligence
+		lineageTag: 2bc0890a-417c-42a7-8786-0449592a562c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Movements Previous Year' =
+			
+			CALCULATE([Total Movements], SAMEPERIODLASTYEAR(DateTable[Date]))
+		dataType: int64
+		formatString: 0
+		displayFolder: time_intelligence
+		lineageTag: 7803a793-98df-4223-93dc-1d60b85025ce
+
+	measure 'YoY %' =
+			
+			DIVIDE([Total Movements] - [Movements Previous Year], [Movements Previous Year])
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: time_intelligence
+		lineageTag: e3c4b04a-d3b3-4ac5-9885-eb372a66f9e6
+
+	measure 'Movements Previous Week' =
+			
+			CALCULATE([Total Movements], DATEADD(DateTable[Date], -7, DAY))
+		dataType: int64
+		formatString: 0
+		displayFolder: time_intelligence
+		lineageTag: 310c5c9c-5534-4db6-a6d9-b807201aa872
+
+	/// Week-over-week change in captured movements. (Was divided by 100 a second time, so it showed 1/100 of the real value.)
+	measure 'WoW %' = DIVIDE([Total Movements] - [Movements Previous Week], [Movements Previous Week])
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: time_intelligence
+		lineageTag: 83427def-1eab-4dd1-90e7-499eaffbd3dd
+
+	measure 'Rolling 7-Day Avg' =
+			
+			AVERAGEX(
+			    DATESINPERIOD(DateTable[Date], MAX(DateTable[Date]), -7, DAY),
+			    [Total Movements]
+			)
+		dataType: double
+		formatString: 0
+		displayFolder: time_intelligence
+		lineageTag: f6330809-eeda-411c-9f23-6a3d9f6e9280
+
+	measure 'Day over Day %' =
+			
+			VAR Today = CALCULATE([Total Movements], DateTable[Date] = MAX(DateTable[Date]))
+			VAR Yesterday = CALCULATE([Total Movements], DateTable[Date] = MAX(DateTable[Date])-1)
+			RETURN DIVIDE(Today - Yesterday, Yesterday)
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: time_intelligence
+		lineageTag: ad424647-b462-4843-8411-4149d2b289f0
+
+	measure 'BTS Passengers Latest Year' =
+			
+			CALCULATE(SUM('public annual_traffic'[total]), 'public annual_traffic'[airport_code]="BTS", 'public annual_traffic'[year]=MAX('public annual_traffic'[year]))
+		dataType: int64
+		formatString: 0
+		displayFolder: annual_traffic
+		lineageTag: 35901212-47b4-4e5a-8efe-53a939d11cec
+
+	measure 'VIE Latest Passengers' =
+			
+			VAR LatestVieDate = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code]="VIE")
+			RETURN
+			CALCULATE(
+			    SUM('public monthly_traffic'[passengers]),
+			    'public monthly_traffic'[airport_code] = "VIE",
+			    'public monthly_traffic'[Date] = LatestVieDate
+			)
+		dataType: int64
+		formatString: 0
+		displayFolder: monthly_traffic
+		lineageTag: ad2cab73-c2b6-4f63-ad95-91ff3f0e9df8
+
+	measure 'VIE Passengers Latest Year' =
+			
+			CALCULATE(SUM('public annual_traffic'[total]), 'public annual_traffic'[airport_code]="VIE", 'public annual_traffic'[year]=MAX('public annual_traffic'[year]))
+		dataType: int64
+		formatString: 0
+		displayFolder: annual_traffic
+		lineageTag: 6c2fbc50-249f-46ae-9039-86b4f80bdf76
+
+	/// Growth gap BTS minus VIE in PERCENTAGE POINTS (not %), same month for both airports. Signed: no longer hides the case where Vienna outgrows Bratislava (was ABS()). Name kept because report visuals reference it.
+	measure 'Rozdiel v trende' =
+			-- BTS growth minus VIE growth, in percentage points, for the newest month BOTH airports have.
+			VAR _vie = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", NOT ISBLANK('public monthly_traffic'[yoy_change_pct]))
+			VAR _bts = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS", NOT ISBLANK('public monthly_traffic'[yoy_change_pct]))
+			VAR _common = MIN(_vie, _bts)
+			VAR _vieYoY = CALCULATE(SUM('public monthly_traffic'[yoy_change_pct]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] = _common)
+			VAR _btsYoY = CALCULATE(SUM('public monthly_traffic'[yoy_change_pct]), 'public monthly_traffic'[airport_code] = "BTS", 'public monthly_traffic'[Date] = _common)
+			RETURN IF(NOT ISBLANK(_vieYoY) && NOT ISBLANK(_btsYoY), _btsYoY - _vieYoY)
+		dataType: double
+		formatString: +0.0" pp";-0.0" pp";0.0" pp"
+		displayFolder: monthly_traffic
+		lineageTag: 623d2603-f276-4eed-9005-c50fca020c85
+
+	measure 'BTS Latest Passengers' =
+			
+			VAR LatestVieDate = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code]="BTS")
+			RETURN
+			CALCULATE(
+			    SUM('public monthly_traffic'[passengers]),
+			    'public monthly_traffic'[airport_code] = "BTS",
+			    'public monthly_traffic'[Date] = LatestVieDate
+			)
+		dataType: int64
+		formatString: 0
+		displayFolder: monthly_traffic
+		lineageTag: e84d6160-69c3-4cfc-9bd9-9192107dabec
+
+	measure 'VIE Latest YoY' =
+			
+			VAR LatestVieDate = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code]="VIE")
+			RETURN
+			CALCULATE(
+			    SUM('public monthly_traffic'[yoy_change_pct]),
+			    'public monthly_traffic'[airport_code] = "VIE",
+			    'public monthly_traffic'[Date] = LatestVieDate
+			)/100
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: monthly_traffic
+		lineageTag: e870357f-0002-41b9-90c7-6072e550ec8b
+
+	measure 'BTS Latest YoY' =
+			
+			VAR LatestVieDate = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code]="BTS")
+			RETURN
+			CALCULATE(
+			    SUM('public monthly_traffic'[yoy_change_pct]),
+			    'public monthly_traffic'[airport_code] = "BTS",
+			    'public monthly_traffic'[Date] = LatestVieDate
+			)/100
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: monthly_traffic
+		lineageTag: a58b52b9-2c9f-4928-892f-01dfb9976764
+
+	/// Year-over-year passenger change for one month. Uses the % published by the airport; where the release gave none (BTS 2019-2024, most VIE 2023 headlines) it is computed from the same month a year earlier. Never sums percentages.
+	measure 'YoY Change PAX %' =
+			VAR _rows = COUNTROWS('public monthly_traffic')
+			VAR _reported = SUM('public monthly_traffic'[yoy_change_pct])
+			VAR _current = SUM('public monthly_traffic'[passengers])
+			VAR _month = SELECTEDVALUE('public monthly_traffic'[Date])
+			VAR _lastYear =
+			    IF(
+			        NOT ISBLANK(_month),
+			        CALCULATE(
+			            SUM('public monthly_traffic'[passengers]),
+			            REMOVEFILTERS(DateTable),
+			            REMOVEFILTERS('public monthly_traffic'[Date]),
+			            'public monthly_traffic'[Date] = EDATE(_month, -12)
+			        )
+			    )
+			RETURN
+			    IF(
+			        _rows = 1 && NOT ISBLANK(_reported),
+			        _reported / 100,
+			        IF(NOT ISBLANK(_current) && _lastYear > 0, DIVIDE(_current - _lastYear, _lastYear))
+			    )
+		dataType: double
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: monthly_traffic
+		lineageTag: e20516bc-e808-4014-a7ad-a02ee4bcea89
+
+	measure 'yoy_change color' =
+			
+			VAR _Value = [YoY Change PAX %]
+			VAR _Airport = SELECTEDVALUE('public monthly_traffic'[airport_code])
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_Value), BLANK(),
+			        _Value < 0, "#E63946",
+			        _Airport = "BTS", "#0F2A4A",
+			        _Airport = "VIE", "#2CA6A4",
+			        "#2CA6A4"
+			    )
+		dataType: string
+		displayFolder: monthly_traffic
+		lineageTag: 9d98a65c-57b4-484f-8a21-389ed2d8eb1f
+
+	measure 'Total Movements BTS' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airport_code] = "BTS")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: 44d3c0b5-ecd7-4971-a870-39d6b5711656
+
+	measure 'Total Movements VIE' =
+			
+			CALCULATE([Total Movements], 'public carrier_movements'[airport_code] = "VIE")
+		dataType: int64
+		formatString: 0
+		displayFolder: carrier_movements
+		lineageTag: 33f8b3fc-0464-48a6-90b4-f63a3bc94dbd
+
+	/// Month of the newest Vienna figure - show it under the card so readers know which month is compared.
+	measure 'VIE Latest Month' =
+			VAR _latest = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE")
+			RETURN FORMAT(_latest, "mmm yyyy")
+		dataType: string
+		displayFolder: monthly_traffic
+
+	/// Month of the newest Bratislava figure.
+	measure 'BTS Latest Month' =
+			VAR _latest = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS")
+			RETURN FORMAT(_latest, "mmm yyyy")
+		dataType: string
+		displayFolder: monthly_traffic
+
+	/// Distinct date+hour slots (05:00-21:59, assumed UTC) that contain at least one captured departure.
+	measure 'Departure Hours With Data' =
+			COUNTROWS(
+			    SUMMARIZE(
+			        FILTER(
+			            'public carrier_movements',
+			            'public carrier_movements'[direction] = "departure"
+			                && 'public carrier_movements'[Hour] >= 5
+			                && 'public carrier_movements'[Hour] <= 21
+			        ),
+			        'public carrier_movements'[Date],
+			        'public carrier_movements'[Hour]
+			    )
+			)
+		dataType: int64
+		formatString: 0
+		displayFolder: data_quality
+
+	/// Share of daytime hours (17 per day) with at least one captured departure. Far below 100% means the hourly OpenSky job missed runs (movements in the gaps are lost for good), so absolute movement counts are UNDERCOUNTED; shares between airlines are still usable.
+	measure 'Capture Coverage %' =
+			VAR _days = DATEDIFF(MIN('public carrier_movements'[Date]), MAX('public carrier_movements'[Date]), DAY) + 1
+			RETURN DIVIDE([Departure Hours With Data], _days * 17)
+		dataType: double
+		formatString: 0%
+		displayFolder: data_quality
+
+	/// Timestamp of the newest captured movement - tells readers how fresh the carrier data is.
+	measure 'Last Movement Captured' = MAX('public carrier_movements'[movement_time])
+		dataType: dateTime
+		formatString: dd mmm yyyy hh:mm
+		displayFolder: data_quality
+
+	column 1
+		dataType: string
+		isHidden
+		lineageTag: d5184072-c6ce-4ee1-b0f6-5fff4b1199ee
+		summarizeBy: none
+		sourceColumn: 1
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Meausre = m
+		mode: import
+		source =
+				let
+				  Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"1" = _t])
+				in
+				  Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

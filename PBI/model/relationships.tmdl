@@ -1,0 +1,29 @@
+relationship d2abb477-321e-a711-d9ad-34a8970577ed
+	fromColumn: 'public carrier_movements'.icao
+	toColumn: 'public airports'.icao_code
+
+relationship 3a642515-02d3-60f6-b14a-7208fc0e239d
+	isActive: false
+	fromColumn: 'public carrier_movements'.other_airport
+	toColumn: 'public airports'.icao_code
+
+relationship 72c0a877-9db6-8fbd-9644-c462d3dc16b7
+	fromColumn: 'public carrier_movements'.Date
+	toColumn: DateTable.Date
+
+relationship 365facef-ce58-d52a-5cea-2c8bd631aeda
+	fromColumn: 'public monthly_traffic'.Date
+	toColumn: DateTable.Date
+
+relationship 6d810a83-3dc1-4159-9069-d0c93e1e0c2a
+	fromColumn: 'public monthly_traffic'.airport_code
+	toColumn: Airport.'Airport Code'
+
+relationship e99eae05-171b-44bf-8903-96dd1aea999c
+	fromColumn: 'public annual_traffic'.airport_code
+	toColumn: Airport.'Airport Code'
+
+relationship 1ffff502-cf9a-4542-b2bb-42b4ada010ff
+	fromColumn: 'public carrier_movements'.airport_code
+	toColumn: Airport.'Airport Code'
+

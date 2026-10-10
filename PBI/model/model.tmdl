@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["public airports","public annual_traffic","public carrier_movements","public monthly_traffic","Meausre","Query"]
+
+ref table 'public airports'
+ref table 'public annual_traffic'
+ref table 'public carrier_movements'
+ref table 'public monthly_traffic'
+ref table Meausre
+ref table DateTable
+ref table Query
+ref table Airport
+
+ref cultureInfo en-US
+
