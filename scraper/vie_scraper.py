@@ -1,24 +1,32 @@
-﻿"""
+"""
 Scraper for Vienna Airport (VIE) monthly traffic results.
 
 Source: https://viennaairport.com/en/company/investor_relations/news/traffic_results_1
 
-The page lists headline news items in a fairly consistent recent format, e.g.:
+The page lists ~190 news items. Monthly traffic headlines look like
+
   "June 2026 Traffic Results: 4,039,311 passengers handled by the Flughafen Wien
    Group (+0.2%) and 2,832,434 passengers at Vienna Airport (-5.9%)"
 
-Older archive entries (pre-2022) use inconsistent phrasing ("X% Rise in Passenger
-Volume for..."), so this parser focuses on the modern pattern and SKIPS anything
-it can't confidently parse rather than guessing. Skipped items are returned
-separately so you can review/extend the regex later.
+but the wording drifts over the years ("Traffic result:", "Traffic results -",
+"... and 2,109,407 by Vienna Airport", "Passengers in the Flughafen-Wien Group"),
+and from 2023 backwards the headline carries no percentage at all. The parser
+therefore requires only what matters -- a month/year at the start and exact
+passenger counts for the Group and for Vienna Airport -- and treats the
+percentages as optional (year-over-year change can be derived from the previous
+year's month downstream).
+
+Headlines with rounded counts ("2.0 million passengers") or without both exact
+counts (quarterly / annual business results) are returned as unparsed.
 """
 
 import re
 from dataclasses import dataclass, asdict
 from typing import Optional
 
-import requests
 from bs4 import BeautifulSoup
+
+from .http_util import make_session
 
 URL = "https://viennaairport.com/en/company/investor_relations/news/traffic_results_1"
 
@@ -28,21 +36,32 @@ MONTHS = {
     "december": 12,
 }
 
+# A headline is monthly traffic only if it STARTS with "<Month> <Year>".
 MONTH_YEAR_PATTERN = re.compile(
-    r"(?P<month>January|February|March|April|May|June|July|August|September|October|November|December)"
-    r"\s+(?P<year>\d{4})\s+Traffic Results",
+    r"^\s*(?P<month>January|February|March|April|May|June|July|August|September|October|November|December)"
+    r"\s+(?P<year>\d{4})\b",
     re.IGNORECASE,
 )
 
+PCT = r"\(\s*([+\-−][\d.]+)\s*%\s*\)"
+NUM = r"(\d{1,3}(?:,\d{3})+)"
+GROUP_NAME = r"Flughafen[\s-]+Wien[\s-]+Group"
+
+# "<n> passengers [(+x%)] [handled] by|in [the] Flughafen Wien Group [(+x%)]"
 GROUP_PATTERN = re.compile(
-    r"([\d,]+)\s*passengers\s*(?:\(([+-][\d.]+)%\)\s*)?handled by the Flughafen Wien\s*Group\s*(?:\(([+-][\d.]+)%\))?",
+    NUM + r"\s*passengers\s*(?:" + PCT + r"\s*)?(?:handled\s+)?(?:by|in)\s+(?:the\s+)?" + GROUP_NAME + r"\s*(?:" + PCT + r")?",
     re.IGNORECASE,
 )
 
+# "<n> passengers at Vienna Airport [(x%)]"  /  "<n> by Vienna (International) Airport"
 VIE_PATTERN = re.compile(
-    r"([\d,]+)\s*passengers at Vienna\s*Airport\s*(?:\(([+-][\d.]+)%\))?",
+    r"(?:and\s+)?" + NUM + r"\s*(?:passengers\s+)?(?:at|by)\s+Vienna\s+(?:International\s+)?Airport\s*(?:" + PCT + r")?",
     re.IGNORECASE,
 )
+
+
+def _pct(raw: Optional[str]) -> Optional[float]:
+    return float(raw.replace("−", "-")) if raw else None
 
 
 @dataclass
@@ -51,69 +70,70 @@ class VieMonthlyRecord:
     year: int
     month: int
     passengers: int
-    yoy_change_pct: float
+    yoy_change_pct: Optional[float]
     group_passengers: Optional[int]
     group_yoy_pct: Optional[float]
     source_url: str
     raw_headline: str
 
 
-def fetch_html(url: str = URL) -> str:
-    headers = {"User-Agent": "Mozilla/5.0 (compatible; FKConsultingBot/0.1; +https://fkconsulting.example)"}
-    resp = requests.get(url, headers=headers, timeout=30)
+def fetch_html(url: str = URL, session=None) -> str:
+    session = session or make_session()
+    resp = session.get(url, timeout=30)
     resp.raise_for_status()
     resp.encoding = "utf-8"
     return resp.text
 
 
+def parse_headline(headline: str) -> Optional[VieMonthlyRecord]:
+    """One monthly record from a headline, or None if it is not an exact monthly traffic headline."""
+    my = MONTH_YEAR_PATTERN.search(headline)
+    if not my:
+        return None
+    gm = GROUP_PATTERN.search(headline)
+    vm = VIE_PATTERN.search(headline)
+    if not (gm and vm):
+        return None
+
+    vie_passengers = int(vm.group(1).replace(",", ""))
+    group_passengers = int(gm.group(1).replace(",", ""))
+    # Sanity: Vienna Airport is always a strict subset of the Group.
+    if not (0 < vie_passengers < group_passengers):
+        return None
+
+    return VieMonthlyRecord(
+        airport_code="VIE",
+        year=int(my.group("year")),
+        month=MONTHS[my.group("month").lower()],
+        passengers=vie_passengers,
+        yoy_change_pct=_pct(vm.group(2)),
+        group_passengers=group_passengers,
+        group_yoy_pct=_pct(gm.group(2) or gm.group(3)),
+        source_url=URL,
+        raw_headline=headline,
+    )
+
+
 def parse(html: str) -> tuple[list[VieMonthlyRecord], list[str]]:
     """Returns (parsed_records, unparsed_headline_texts)."""
     soup = BeautifulSoup(html, "html.parser")
-
-    full_text = soup.get_text(" ", strip=True)
-    full_text = re.sub(r"\s+", " ", full_text)
+    full_text = re.sub(r"\s+", " ", soup.get_text(" ", strip=True))
 
     item_pattern = re.compile(
         r"\d{2}/\d{2}/\d{4}\s*\|\s*IR-Traffic results\s*(.+?)more details", re.IGNORECASE
     )
-    items = item_pattern.findall(full_text)
 
-    records: list[VieMonthlyRecord] = []
+    records: dict[tuple[int, int], VieMonthlyRecord] = {}
     unparsed: list[str] = []
-
-    for headline in items:
+    for headline in item_pattern.findall(full_text):
         headline = headline.strip()
-
-        my = MONTH_YEAR_PATTERN.search(headline)
-        gm = GROUP_PATTERN.search(headline)
-        vm = VIE_PATTERN.search(headline)
-
-        if not (my and gm and vm):
+        record = parse_headline(headline)
+        if record is None:
             unparsed.append(headline)
-            continue
+        else:
+            records.setdefault((record.year, record.month), record)  # newest item first wins
 
-        group_pct = gm.group(2) or gm.group(3)
-        vie_pct = vm.group(2)
-
-        if group_pct is None or vie_pct is None:
-            unparsed.append(headline)
-            continue
-
-        records.append(
-            VieMonthlyRecord(
-                airport_code="VIE",
-                year=int(my.group("year")),
-                month=MONTHS[my.group("month").lower()],
-                passengers=int(vm.group(1).replace(",", "")),
-                yoy_change_pct=float(vie_pct),
-                group_passengers=int(gm.group(1).replace(",", "")),
-                group_yoy_pct=float(group_pct),
-                source_url=URL,
-                raw_headline=headline,
-            )
-        )
-
-    return records, unparsed
+    return list(records.values()), unparsed
 
 
 def scrape() -> tuple[list[dict], list[str]]:
@@ -124,10 +144,6 @@ def scrape() -> tuple[list[dict], list[str]]:
 
 if __name__ == "__main__":
     recs, skipped = scrape()
-    print(f"Parsed {len(recs)} monthly records, skipped {len(skipped)} unrecognized headlines.")
+    print(f"Parsed {len(recs)} monthly records, skipped {len(skipped)} non-monthly/rounded headlines.")
     for r in recs[:5]:
         print(r)
-    if skipped:
-        print("\n--- Skipped (review these regex patterns later) ---")
-        for s in skipped[:5]:
-            print(s)

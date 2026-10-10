@@ -36,9 +36,9 @@ def upsert_vie_monthly(conn, records: list[dict]) -> None:
             VALUES %s
             ON CONFLICT (airport_code, year, month) DO UPDATE SET
                 passengers = excluded.passengers,
-                yoy_change_pct = excluded.yoy_change_pct,
+                yoy_change_pct = COALESCE(excluded.yoy_change_pct, monthly_traffic.yoy_change_pct),
                 group_passengers = excluded.group_passengers,
-                group_yoy_pct = excluded.group_yoy_pct,
+                group_yoy_pct = COALESCE(excluded.group_yoy_pct, monthly_traffic.group_yoy_pct),
                 scraped_at = NOW()
             """,
             [
@@ -51,33 +51,38 @@ def upsert_vie_monthly(conn, records: list[dict]) -> None:
     conn.commit()
 
 
-def insert_bts_candidates(conn, records: list[dict]) -> None:
-    # If bts_scraper.py's infer_month() found exactly one clear month name
-    # in the article text, we trust it and write directly with verified=1 --
-    # via proper ON CONFLICT upsert, so re-running the scraper for the same
-    # year is now idempotent for these (no more duplicate rows).
-    #
-    # If no single clear month was found, fall back to the original
-    # behavior: verified=0, month=NULL, left for manual review in Supabase.
-    # NOTE: for these NULL-month rows, the UNIQUE(airport_code,year,month)
-    # constraint doesn't catch duplicates (Postgres treats every NULL as
-    # distinct) -- re-running can still insert the same unresolved candidate
-    # again. Harmless, just something to dedupe manually before UPDATE-ing.
+def insert_bts_candidates(conn, records: list[dict]) -> tuple[int, int]:
+    """
+    Store BTS monthly figures extracted from press releases.
+
+    * Month resolved (exactly one clear month in the article): written with
+      verified=1 via ON CONFLICT upsert, so re-running is idempotent. The year is
+      the DATA year computed by the scraper (a January release about December
+      belongs to December of the previous year), not the publication year.
+    * Month ambiguous: stored with verified=0 and month=NULL for manual review,
+      but only if an identical unresolved row is not already there. Postgres
+      treats every NULL as distinct, so the UNIQUE(airport_code, year, month)
+      constraint cannot dedupe these -- before this check every weekly run
+      re-inserted them.
+
+    Returns (resolved_count, unresolved_count).
+    """
     resolved = []
     unresolved = []
     for r in records:
         row = {
             "airport_code": r["airport_code"],
-            "year": int(r["published_date"][-4:]),
             "passengers": r["passengers_mentioned"],
             "yoy_change_pct": r["yoy_pct_mentioned"],
             "source_url": r["article_url"],
             "raw_text": f"{r['title']} | {r['context_sentence']}",
         }
-        if r.get("inferred_month") is not None:
+        if r.get("inferred_month") is not None and r.get("data_year") is not None:
+            row["year"] = r["data_year"]
             row["month"] = r["inferred_month"]
             resolved.append(row)
         else:
+            row["year"] = int(r["published_date"][-4:])
             unresolved.append(row)
 
     with conn.cursor() as cur:
@@ -90,7 +95,7 @@ def insert_bts_candidates(conn, records: list[dict]) -> None:
                 VALUES %s
                 ON CONFLICT (airport_code, year, month) DO UPDATE SET
                     passengers = excluded.passengers,
-                    yoy_change_pct = excluded.yoy_change_pct,
+                    yoy_change_pct = COALESCE(excluded.yoy_change_pct, monthly_traffic.yoy_change_pct),
                     verified = 1,
                     source_url = excluded.source_url,
                     raw_text = excluded.raw_text,
@@ -107,7 +112,13 @@ def insert_bts_candidates(conn, records: list[dict]) -> None:
                 """
                 INSERT INTO monthly_traffic
                     (airport_code, year, month, passengers, yoy_change_pct, verified, source_url, raw_text)
-                VALUES (%(airport_code)s, %(year)s, NULL, %(passengers)s, %(yoy_change_pct)s, 0, %(source_url)s, %(raw_text)s)
+                SELECT %(airport_code)s, %(year)s, NULL, %(passengers)s, %(yoy_change_pct)s, 0, %(source_url)s, %(raw_text)s
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM monthly_traffic
+                    WHERE airport_code = %(airport_code)s
+                      AND month IS NULL
+                      AND passengers = %(passengers)s
+                )
                 """,
                 row,
             )
