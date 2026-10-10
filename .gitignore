@@ -23,3 +23,6 @@ Thumbs.db
 # Power BI local artefacts
 *.pbix.bak
 ~$*
+
+# Candidate reports produced by PBI/tools/patch_report.py --out ... (commit only after Desktop opens them)
+PBI/*.patched.pbix
