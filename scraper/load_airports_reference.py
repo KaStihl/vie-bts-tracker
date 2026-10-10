@@ -25,7 +25,7 @@ Requires: pip install requests psycopg2-binary pycountry
 
 import csv
 import io
-import requests
+from .http_util import make_session
 import pycountry
 
 AIRPORTS_CSV_URL = "https://davidmegginson.github.io/ourairports-data/airports.csv"
@@ -39,7 +39,7 @@ def country_name(iso_code: str) -> str:
 
 
 def load_and_filter() -> list[dict]:
-    resp = requests.get(AIRPORTS_CSV_URL, timeout=60)
+    resp = make_session().get(AIRPORTS_CSV_URL, timeout=60)
     resp.raise_for_status()
 
     reader = csv.DictReader(io.StringIO(resp.text))

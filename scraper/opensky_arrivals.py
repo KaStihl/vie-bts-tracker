@@ -10,10 +10,9 @@ the previous day or earlier are available." Departures don't have this
 restriction (derivable as soon as an aircraft climbs away), which is why
 opensky_scraper.py's hourly departure capture works fine.
 
-Run this once/day (not hourly -- there's no benefit to checking more often,
-since "yesterday" doesn't change until tomorrow). Captures a fixed 24-hour
-window shifted 24-48h behind "now", which lines up with a daily cron to give
-continuous day-over-day coverage without gaps.
+Run this once/day (not hourly -- there's no benefit to checking more often).
+Captures whole UTC calendar days (today-2 and today-3), so consecutive runs tile
+the timeline exactly and a missed run is healed by the next one.
 
 Reuses auth/callsign/save helpers from opensky_scraper.py to avoid duplicating
 that logic -- only the capture window and direction differ.
@@ -21,6 +20,7 @@ that logic -- only the capture window and direction differ.
 Requires: pip install requests psycopg2-binary
 """
 
+import os
 import time
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
@@ -28,38 +28,60 @@ from datetime import datetime, timedelta, timezone
 from . import opensky_scraper as core
 
 
-def capture_yesterday_arrivals(client_id: str, client_secret: str) -> list[dict]:
+# How many complete UTC days to (re)fetch per run. 2 means "the day before
+# yesterday" plus the one before it: a missed or failed daily run is healed by
+# the next one. Overlap is harmless (ON CONFLICT DO NOTHING) and costs two extra
+# API calls per day.
+DAYS_PER_RUN = int(os.environ.get("ARRIVAL_DAYS", "2"))
+
+
+def utc_day_windows(now: datetime, days: int) -> list[tuple[int, int]]:
+    """Complete UTC calendar days, ending at the day BEFORE yesterday.
+
+    OpenSky only serves arrivals once their day has been batch-processed (>~24h
+    old), so the newest day we ask for is today-2. Anchoring to midnight UTC --
+    instead of "now minus 24h/48h", as before -- makes consecutive runs tile the
+    timeline exactly: no gaps or overlaps however late the cron job starts.
     """
-    Captures arrivals for the 24h window from 48h ago to 24h ago -- safely
-    inside OpenSky's "batch processed, available" zone for both airports.
-    """
+    today = now.astimezone(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    windows = []
+    for back in range(2, 2 + days):
+        begin = today - timedelta(days=back)
+        windows.append((int(begin.timestamp()), int((begin + timedelta(days=1)).timestamp()) - 1))
+    return windows
+
+
+def capture_arrivals(client_id: str, client_secret: str, now: datetime | None = None) -> list[dict]:
+    """Captures arrivals for the last DAYS_PER_RUN fully processed UTC days."""
     token = core.get_access_token(client_id, client_secret)
     movements: list[core.Movement] = []
+    now = now or datetime.now(timezone.utc)
 
-    now = int(time.time())
-    begin = now - 48 * 3600
-    end = now - 24 * 3600
-
-    for our_code, icao in core.AIRPORTS.items():
-        flights = core.fetch_window(token, icao, begin, end, "arrival")
-        for f in flights:
-            callsign = (f.get("callsign") or "").strip()
-            movements.append(
-                core.Movement(
-                    airport_code=our_code,
-                    icao=icao,
-                    direction="arrival",
-                    callsign=callsign,
-                    airline=core.resolve_airline(callsign),
-                    other_airport=f.get("estDepartureAirport"),
-                    icao24=f.get("icao24", ""),
-                    movement_time=datetime.fromtimestamp(f["lastSeen"], tz=timezone.utc),
-                    source_url=f"{core.API_BASE}/flights/arrival?airport={icao}",
+    for begin, end in utc_day_windows(now, DAYS_PER_RUN):
+        for our_code, icao in core.AIRPORTS.items():
+            flights = core.fetch_window(token, icao, begin, end, "arrival")
+            for f in flights:
+                callsign = (f.get("callsign") or "").strip()
+                movements.append(
+                    core.Movement(
+                        airport_code=our_code,
+                        icao=icao,
+                        direction="arrival",
+                        callsign=callsign,
+                        airline=core.resolve_airline(callsign),
+                        other_airport=f.get("estDepartureAirport"),
+                        icao24=f.get("icao24", ""),
+                        movement_time=datetime.fromtimestamp(f["lastSeen"], tz=timezone.utc),
+                        source_url=f"{core.API_BASE}/flights/arrival?airport={icao}",
+                    )
                 )
-            )
-        time.sleep(core.SLEEP_BETWEEN_CALLS)
+            time.sleep(core.SLEEP_BETWEEN_CALLS)
 
     return [asdict(m) for m in movements]
+
+
+# Kept for backwards compatibility with anything that imported the old name.
+capture_yesterday_arrivals = capture_arrivals
 
 
 if __name__ == "__main__":
@@ -74,9 +96,9 @@ if __name__ == "__main__":
             "Set OPENSKY_CLIENT_ID and OPENSKY_CLIENT_SECRET environment variables first."
         )
 
-    print("Capturing arrivals for the window 48h-24h ago...")
+    print(f"Capturing arrivals for the last {DAYS_PER_RUN} fully processed UTC days...")
     try:
-        results = capture_yesterday_arrivals(client_id, client_secret)
+        results = capture_arrivals(client_id, client_secret)
     except RuntimeError as e:
         if str(e) == "RATE_LIMITED":
             print("Skipped this run: daily OpenSky credit budget is temporarily exhausted "

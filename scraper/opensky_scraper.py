@@ -35,9 +35,21 @@ Requires: pip install requests psycopg2-binary
 """
 
 import time
-import requests
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta, timezone
+
+from .http_util import RETRY_SERVER_ERRORS_ONLY, make_session
+
+_SESSION = None
+
+
+def session():
+    """Shared requests session: retries 5xx/connection errors with backoff, but NOT 429
+    (OpenSky's 429 means the daily credit budget is spent -- see fetch_window)."""
+    global _SESSION
+    if _SESSION is None:
+        _SESSION = make_session(retry_statuses=RETRY_SERVER_ERRORS_ONLY)
+    return _SESSION
 
 TOKEN_URL = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
 API_BASE = "https://opensky-network.org/api"
@@ -80,7 +92,7 @@ class Movement:
 
 
 def get_access_token(client_id: str, client_secret: str) -> str:
-    resp = requests.post(
+    resp = session().post(
         TOKEN_URL,
         data={
             "grant_type": "client_credentials",
@@ -108,7 +120,7 @@ def fetch_window(
     headers = {"Authorization": f"Bearer {token}"}
     params = {"airport": icao, "begin": begin, "end": end}
 
-    resp = requests.get(url, headers=headers, params=params, timeout=60)
+    resp = session().get(url, headers=headers, params=params, timeout=60)
     remaining = resp.headers.get("X-Rate-Limit-Remaining")
     if remaining is not None:
         print(f"  [credits remaining: {remaining}]")

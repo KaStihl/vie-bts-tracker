@@ -1,6 +1,5 @@
-requests>=2.31
-beautifulsoup4>=4.12
-
-psycopg2-binary>=2.9
-
-pdfplumber>=0.10
+requests~=2.34
+beautifulsoup4~=4.15
+psycopg2-binary~=2.9
+pdfplumber~=0.11
+pycountry~=26.2

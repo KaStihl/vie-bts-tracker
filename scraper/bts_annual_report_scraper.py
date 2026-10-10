@@ -27,12 +27,12 @@ import re
 import io
 from dataclasses import dataclass, asdict
 
-import requests
 import pdfplumber
 from bs4 import BeautifulSoup
 
+from .http_util import make_session
+
 LISTING_URL = "https://www.bts.aero/en/airport/press/annual-report/"
-HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; FKConsultingBot/0.1; +https://fkconsulting.example)"}
 
 # Matches a year at the start of a data row, e.g. "2019 125 839 119 406 ... 2 290242"
 YEAR_ROW_PATTERN = re.compile(r"^(20\d{2})\s+(.*)$")
@@ -63,7 +63,7 @@ class BtsAnnualReportMonthly:
 
 def find_latest_report_url() -> str:
     """Listing page shows reports newest-first; grab the first PDF link."""
-    resp = requests.get(LISTING_URL, headers=HEADERS, timeout=30)
+    resp = make_session().get(LISTING_URL, timeout=30)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -78,7 +78,7 @@ def find_latest_report_url() -> str:
 
 
 def download_pdf(url: str) -> bytes:
-    resp = requests.get(url, headers=HEADERS, timeout=60)
+    resp = make_session().get(url, timeout=60)
     resp.raise_for_status()
     return resp.content
 
