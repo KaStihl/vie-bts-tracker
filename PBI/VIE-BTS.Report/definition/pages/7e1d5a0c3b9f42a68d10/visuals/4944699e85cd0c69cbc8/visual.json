@@ -5,7 +5,7 @@
     "x": 248,
     "y": 136,
     "z": 5000,
-    "height": 132,
+    "height": 156,
     "width": 540,
     "tabOrder": 5000
   },
@@ -44,6 +44,21 @@
               "queryRef": "Meausre.VIE Latest YoY",
               "nativeQueryRef": "vs same month last year",
               "displayName": "vs same month last year"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Meausre"
+                    }
+                  },
+                  "Property": "VIE Latest Month"
+                }
+              },
+              "queryRef": "Meausre.VIE Latest Month",
+              "nativeQueryRef": "Latest month",
+              "displayName": "Latest month"
             }
           ]
         }
@@ -63,7 +78,7 @@
             "columnCount": {
               "expr": {
                 "Literal": {
-                  "Value": "2L"
+                  "Value": "3L"
                 }
               }
             },
@@ -139,7 +154,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "34D"
+                  "Value": "32D"
                 }
               }
             },
@@ -192,7 +207,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "34D"
+                  "Value": "32D"
                 }
               }
             },
@@ -229,6 +244,45 @@
           },
           "selector": {
             "metadata": "Meausre.VIE Latest YoY"
+          }
+        },
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI Semibold'', wf_segoe-ui_semibold, helvetica, arial, sans-serif'"
+                }
+              }
+            },
+            "horizontalAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5B6B7C'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Meausre.VIE Latest Month"
           }
         }
       ],
@@ -323,6 +377,52 @@
           },
           "selector": {
             "metadata": "Meausre.VIE Latest YoY"
+          }
+        },
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "11D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'''Segoe UI'', wf_segoe-ui_normal, helvetica, arial, sans-serif'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5B6B7C'"
+                    }
+                  }
+                }
+              }
+            },
+            "matchValueAlignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Meausre.VIE Latest Month"
           }
         }
       ],
@@ -583,15 +683,8 @@
             },
             "text": {
               "expr": {
-                "Measure": {
-                  "Measure": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "Meausre"
-                      }
-                    },
-                    "Property": "VIE Card Title"
-                  }
+                "Literal": {
+                  "Value": "'VIENNA'"
                 }
               }
             }

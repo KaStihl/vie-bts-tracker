@@ -3,9 +3,9 @@
   "name": "5e9770df1a1a8f18a2f7",
   "position": {
     "x": 1142,
-    "y": 284,
+    "y": 306,
     "z": 6100,
-    "height": 596,
+    "height": 574,
     "width": 754,
     "tabOrder": 6100
   },
@@ -168,7 +168,7 @@
             "logAxisScale": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             },
@@ -738,7 +738,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Monthly passengers handled; markers are the months the airports actually published'"
+                  "Value": "'Monthly passengers handled; markers are the months the airports actually published (linear scale)'"
                 }
               }
             },

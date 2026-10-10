@@ -77,23 +77,46 @@ of 86k, which would need 86 REST calls per refresh).
 > first Desktop refresh is the test. If the REST row cap bites (default 1,000 rows per request),
 > raise **Max rows** in Supabase -> Settings -> API and increase `PageSize` in `fnSupabase`.
 
-## Report fixes (`tools/patch_report.py`)
+## Report design (Power BI Project, `VIE-BTS.pbip`)
 
-* Trend page: the dashed linear trend line on the YoY chart removed (a straight line through two
-  airports with opposite trends says nothing); the note no longer claims Vienna's decline began
-  in November 2025 (it turns negative in April 2026); card captions say "(latest month)";
-  "Diff YoY %" is now "Growth gap (pp)".
-* "Total PAX by Airport": straight segments instead of cardinal-smoothed curves, which invented
-  values between the months an airport did not publish.
-* Sources page: the OpenSky entry linked to the GitHub repo and printed `https://https://`.
-* Home page: stray closing quote. "Last Refresh" labels say (UTC).
-* Hidden work-in-progress pages renamed ("Duplicate of Page 3" -> "Carrier Analysis (WIP)").
+Open **`VIE-BTS.pbip`** (not the `.pbix`). A Power BI Project stores the report (`VIE-BTS.Report`, PBIR JSON)
+and the model (`VIE-BTS.SemanticModel`, TMDL) as plain text, so changes show up as git diffs and can be made
+outside Desktop. The `.pbix` is kept only as the previous snapshot.
 
-Known leftovers: the hidden *BTS Overview* page references a measure that no longer exists
-(`Ryanair Share Trend Check`); the smart-narrative box on the trend page prints raw measure
-names ("YoY Change PAX % trended up ...").
+| Home | Trend | Source |
+|---|---|---|
+| ![Home](../docs/screenshots/home.png) | ![Trend](../docs/screenshots/trend.png) | ![Source](../docs/screenshots/source.png) |
 
-## Recommended next step
+Why the old report looked dull: each page's *entire layout* (header, title, logo, washed-out panels, faded
+airport photo) was ONE 1.4 MB picture used as the page background, with the visuals laid over it. The new
+pages are native: solid page colour, white cards with soft shadows, a real header, KPI cards per airport (value,
+signed change in red/green, month shown), restyled charts (no linear trend line, no pink "Negative" zone, no
+smoothing, linear instead of log axis) and a short accurate "What happened" text instead of the smart-narrative
+box that summed percentages ("falling by 727 %").
 
-Save as a **Power BI Project** (File -> Save as -> `.pbip`, enable the PBIP preview feature).
-Then the report layer is also plain text in git and `tools/patch_report.py` is no longer needed.
+The old pages are still in the report, renamed "... (old design)" and hidden.
+
+### Generating / changing the pages
+
+The pages are generated, not hand-drawn, so the design is reviewable and repeatable:
+
+```
+python PBI/tools/build_trend_page.py     # DAX measures for the report + the Trend page
+python PBI/tools/build_info_pages.py     # Home and Source pages (optional arg: page id to open first)
+```
+
+Close Desktop first. Both scripts only write text files; every file is valid against Microsoft's PBIR JSON
+schemas (checked when they were written). Desktop is the final judge, so after a change open the project
+and look.
+
+Lessons from getting it to load (so nobody has to rediscover them):
+* **A visual title/subtitle bound to a measure (`title.text = Measure`) makes Desktop fail with "Failed to load
+  the report".** Titles are static; dynamic values (month, change) are callouts inside the card.
+* Editing the `.pbix` archive from outside Desktop did not work (Desktop rejected two differently rebuilt
+  archives as corrupted even though the content was schema-valid); that is why the project uses `.pbip`.
+  `tools/patch_report.py` is kept only for reference.
+* Windows path length (260 chars) bites when copying the project into deep folders.
+* Keep local-only files out of git: `.pbi/cache.abf` (data cache) and `.pbi/localSettings.json`.
+
+Known leftovers: the hidden work-in-progress pages ("BTS Operations (WIP)" references a measure that no longer
+exists, `Ryanair Share Trend Check`; "Carrier Analysis (WIP)").

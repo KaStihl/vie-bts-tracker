@@ -277,18 +277,6 @@ table Meausre
 		displayFolder: report
 		lineageTag: 1ecf024e-a05e-4565-8d9c-90d462f099b8
 
-	/// Dynamic card title with the month shown.
-	measure 'VIE Card Title' =
-			"VIENNA   ·   " & [VIE Latest Month]
-		displayFolder: report
-		lineageTag: 58b26ae9-572a-416d-a064-c374f214b0d9
-
-	/// Dynamic card title with the month shown.
-	measure 'BTS Card Title' =
-			"BRATISLAVA   ·   " & [BTS Latest Month]
-		displayFolder: report
-		lineageTag: 10876c93-7a3f-4e07-99b6-b87f404c66d8
-
 	/// Red when Vienna shrinks, green when it grows.
 	measure 'VIE YoY Color' =
 			IF([VIE Latest YoY] < 0, "#B85C5C", "#2E8B57")

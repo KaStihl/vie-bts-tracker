@@ -5,7 +5,7 @@
     "x": 1356,
     "y": 136,
     "z": 5200,
-    "height": 132,
+    "height": 156,
     "width": 540,
     "tabOrder": 5200
   },
@@ -27,8 +27,8 @@
                 }
               },
               "queryRef": "Meausre.Rozdiel v trende",
-              "nativeQueryRef": "BTS growth minus VIE growth",
-              "displayName": "BTS growth minus VIE growth"
+              "nativeQueryRef": "BTS minus VIE",
+              "displayName": "BTS minus VIE"
             }
           ]
         }
@@ -124,7 +124,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "34D"
+                  "Value": "28D"
                 }
               }
             },

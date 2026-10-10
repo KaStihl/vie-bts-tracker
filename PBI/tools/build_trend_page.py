@@ -249,7 +249,8 @@ def build_total_chart(x, y, w, h, z):
         style_axis(o[k][0]["properties"])
     o["categoryAxis"][0]["properties"]["gridlineShow"] = B(False)
     o["valueAxis"][0]["properties"].update({"gridlineShow": B(True), "gridlineColor": color(GRID), "gridlineStyle": S("dashed"),
-                                           "labelDisplayUnits": D(1000000), "labelPrecision": LONG(1), "showAxisTitle": B(False)})
+                                           "labelDisplayUnits": D(1000000), "labelPrecision": LONG(1), "showAxisTitle": B(False),
+                                           "logAxisScale": B(False)})
     o["lineStyles"] = [
         {"properties": {"areaShow": B(False), "lineChartType": S("linear"), "showMarker": B(True), "markerSize": D(5),
                         "strokeWidth": D(3), "strokeLineJoin": S("round")}},
@@ -263,7 +264,7 @@ def build_total_chart(x, y, w, h, z):
     o["legend"] = [{"properties": {"show": B(True), "position": S("TopRight"), "showTitle": B(False),
                                    "labelColor": color(NAVY), "fontSize": D(12), "fontFamily": L(FONT_SEMI)}}]
     o.pop("seriesLabels", None)
-    cont = container("Passengers per month", "Monthly passengers handled; markers are the months the airports actually published")
+    cont = container("Passengers per month", "Monthly passengers handled; markers are the months the airports actually published (linear scale)")
     return place("chart-total", d, x, y, w, h, z, cont)
 
 
@@ -352,8 +353,6 @@ def write_measures() -> None:
             'RETURN',
             '"Bratislava " & FORMAT(_bts, "+0%;-0%") & "   ·   Vienna " & FORMAT(_vie, "+0.0%;-0.0%") & "   year over year (latest month)"'],
             doc="One-line takeaway shown under the page title."),
-        block("'VIE Card Title'", ['"VIENNA   ·   " & [VIE Latest Month]'], doc="Dynamic card title with the month shown."),
-        block("'BTS Card Title'", ['"BRATISLAVA   ·   " & [BTS Latest Month]'], doc="Dynamic card title with the month shown."),
         block("'VIE YoY Color'", ['IF([VIE Latest YoY] < 0, "#B85C5C", "#2E8B57")'], doc="Red when Vienna shrinks, green when it grows."),
         block("'BTS YoY Color'", ['IF([BTS Latest YoY] < 0, "#B85C5C", "#2E8B57")'], doc="Red when Bratislava shrinks, green when it grows."),
     ])
@@ -376,11 +375,6 @@ def write_measures() -> None:
 def main() -> int:
     write_measures()
 
-    if NEW.exists():
-        for p in sorted(NEW.rglob("*"), reverse=True):
-            p.unlink() if p.is_file() else p.rmdir()
-        NEW.rmdir()
-
     out: dict[str, dict] = {}
 
     def add(pair):
@@ -388,61 +382,70 @@ def main() -> int:
 
     # header band, title, headline, brand
     add(shape("hdr", 0, 0, 1920, 112, 0, NAVY))
-    add(textbox("title", 40, 12, 1300, 56, 1000, [("Vienna ⇄ Bratislava Aviation Tracker", 28, "#FFFFFF", True)]))
+    add(textbox("title", 40, 8, 1300, 64, 1000, [("Vienna ⇄ Bratislava Aviation Tracker", 28, "#FFFFFF", True)]))
     add(kpi_card("headline", 40, 66, 1500, 40, 2000, [{"prop": "Headline", "name": "Headline", "kind": "text", "size": 16, "hex": LIGHT_TEAL}],
                  None, NAVY, headline=True))
-    add(textbox("brand", 1500, 22, 380, 48, 3000, [("FK's LAB", 26, "#FFFFFF", True)], align="right"))
-    add(textbox("brand2", 1500, 68, 380, 30, 3500, [("fkslab.com", 12, LIGHT_TEAL, False)], align="right"))
+    add(textbox("brand", 1500, 14, 380, 58, 3000, [("FK's LAB", 26, "#FFFFFF", True)], align="right"))
+    add(textbox("brand2", 1500, 68, 380, 36, 3500, [("fkslab.com", 12, LIGHT_TEAL, False)], align="right"))
 
     # filter rail
-    add(shape("rail", 24, 136, 208, 880, 4000, CARD, rounded=12, shadow=True))
-    add(textbox("flt", 40, 148, 176, 28, 4100, [("FILTERS", 11, MUTED, True)]))
-    add(build_slicer("c67e2fb2476b624d0bbb", "sl-airport", "Airport", 40, 182, 176, 68, 4200))
-    add(build_slicer("76109c13ddd8312dd082", "sl-year", "Year", 40, 262, 176, 68, 4300))
-    add(build_slicer("e40dc81a94e2d0a35d0b", "sl-month", "Month", 40, 342, 176, 68, 4400))
-    add(build_clear_button(40, 426, 176, 40, 4500))
-    add(textbox("pg", 40, 500, 176, 28, 4600, [("PAGES", 11, MUTED, True)]))
-    add(build_nav(40, 530, 176, 150, 4700))
+    add(shape("rail", 24, 136, 208, 862, 4000, CARD, rounded=12, shadow=True))
+    add(textbox("flt", 40, 144, 176, 38, 4100, [("FILTERS", 11, MUTED, True)]))
+    add(build_slicer("c67e2fb2476b624d0bbb", "sl-airport", "Airport", 40, 186, 176, 68, 4200))
+    add(build_slicer("76109c13ddd8312dd082", "sl-year", "Year", 40, 266, 176, 68, 4300))
+    add(build_slicer("e40dc81a94e2d0a35d0b", "sl-month", "Month", 40, 346, 176, 68, 4400))
+    add(build_clear_button(40, 430, 176, 40, 4500))
+    add(textbox("pg", 40, 494, 176, 38, 4600, [("PAGES", 11, MUTED, True)]))
+    add(build_nav(40, 536, 176, 130, 4700))
 
     # KPI row
-    add(kpi_card("kpi-vie", 248, 136, 540, 132, 5000,
-                 [{"prop": "VIE Latest Passengers", "name": "Passengers", "kind": "pax", "size": 34, "hex": NAVY},
-                  {"prop": "VIE Latest YoY", "name": "vs same month last year", "kind": "pct", "size": 34, "color_measure": "VIE YoY Color"}],
-                 {"expr": {"Measure": measure_ref("VIE Card Title")}}, TEAL))
-    add(kpi_card("kpi-bts", 802, 136, 540, 132, 5100,
-                 [{"prop": "BTS Latest Passengers", "name": "Passengers", "kind": "pax", "size": 34, "hex": NAVY},
-                  {"prop": "BTS Latest YoY", "name": "vs same month last year", "kind": "pct", "size": 34, "color_measure": "BTS YoY Color"}],
-                 {"expr": {"Measure": measure_ref("BTS Card Title")}}, NAVY))
-    add(kpi_card("kpi-gap", 1356, 136, 540, 132, 5200,
-                 [{"prop": "Rozdiel v trende", "name": "BTS growth minus VIE growth", "kind": "pp", "size": 34, "hex": GOLD}],
+    # NOTE: a title bound to a measure (title.text = Measure) makes Desktop fail with "Failed to load the
+    # report" (found by bisecting), so the titles are static and the month is a third callout.
+    add(kpi_card("kpi-vie", 248, 136, 540, 156, 5000,
+                 [{"prop": "VIE Latest Passengers", "name": "Passengers", "kind": "pax", "size": 32, "hex": NAVY},
+                  {"prop": "VIE Latest YoY", "name": "vs same month last year", "kind": "pct", "size": 32, "color_measure": "VIE YoY Color"},
+                  {"prop": "VIE Latest Month", "name": "Latest month", "kind": "text", "size": 20, "hex": MUTED}],
+                 "VIENNA", TEAL))
+    add(kpi_card("kpi-bts", 802, 136, 540, 156, 5100,
+                 [{"prop": "BTS Latest Passengers", "name": "Passengers", "kind": "pax", "size": 32, "hex": NAVY},
+                  {"prop": "BTS Latest YoY", "name": "vs same month last year", "kind": "pct", "size": 32, "color_measure": "BTS YoY Color"},
+                  {"prop": "BTS Latest Month", "name": "Latest month", "kind": "text", "size": 20, "hex": MUTED}],
+                 "BRATISLAVA", NAVY))
+    add(kpi_card("kpi-gap", 1356, 136, 540, 156, 5200,
+                 [{"prop": "Rozdiel v trende", "name": "BTS minus VIE", "kind": "pp", "size": 28, "hex": GOLD}],
                  "GROWTH GAP", GOLD,
                  subtitle="Difference between the two growth rates, in percentage points (pp)"))
 
     # charts
-    add(build_yoy_chart(248, 284, 880, 596, 6000))
-    add(build_total_chart(1142, 284, 754, 596, 6100))
+    add(build_yoy_chart(248, 306, 880, 574, 6000))
+    add(build_total_chart(1142, 306, 754, 574, 6100))
 
     # story + footer
     story = [("WHAT HAPPENED", 11, MUTED, True),
              ("14 Nov 2025: Wizz Air opens a base in Bratislava.  March 2026: Wizz Air ends its Vienna operations after Austria's aviation tax.  "
               "Since April 2026 Vienna is below last year's passenger numbers, while Bratislava keeps growing at double- and triple-digit rates.",
               13, NAVY, False)]
-    name, data = textbox("story", 248, 894, 1648, 92, 7000, story)
-    data["visual"]["visualContainerObjects"] = container(None, pad=14)
+    name, data = textbox("story", 248, 892, 1648, 106, 7000, story)
+    data["visual"]["visualContainerObjects"] = container(None, pad=8)
     out[name] = data
-    add(textbox("src", 248, 1006, 1180, 40, 7100,
+    add(textbox("src", 248, 1010, 1100, 42, 7100,
                 [("Sources: Vienna Airport and Bratislava Airport press releases and annual reports · OpenSky Network · code on GitHub: KaStihl/vie-bts-tracker",
                   11, MUTED, False)]))
-    add(textbox("lr-label", 1440, 1010, 190, 30, 7200, [("Last refresh (UTC):", 11, MUTED, False)], align="right"))
-    add(build_last_refresh(1640, 1004, 256, 40, 7300))
+    add(textbox("lr-label", 1370, 1012, 190, 38, 7200, [("Last refresh (UTC):", 11, MUTED, False)], align="right"))
+    add(build_last_refresh(1566, 1008, 330, 46, 7300))
 
     for name, data in out.items():
         dump(NEW / "visuals" / name / "visual.json", data)
+    if (NEW / "visuals").exists():
+        for f in (NEW / "visuals").glob("*/visual.json"):
+            if f.parent.name not in out:
+                f.unlink()                       # folders are left behind: OneDrive/Desktop may lock them
 
     # page
     page = load(OLD / "page.json")
     page["name"] = NEW_ID
     page["displayName"] = "Trend"
+    page.pop("visibility", None)
     page["objects"] = {"background": [{"properties": {"color": color(BG), "transparency": D(0)}}]}
     dump(NEW / "page.json", page)
 
