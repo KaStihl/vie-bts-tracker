@@ -1,24 +1,37 @@
-# Daily backfill of other_airport for movements that have had time to land.
-# Runs once/day (not hourly like the main capture) -- checking a flight more
-# often than daily doesn't help it resolve any faster, and this keeps API
-# credit usage predictable.
+# Daily backfill of other_airport (destination / origin) for movements that have
+# had time to land. Runs once/day: checking a flight more often than daily does
+# not help it resolve any faster, and this keeps API credit usage predictable.
 
 name: Daily OpenSky backfill
 
 on:
   schedule:
     - cron: "30 3 * * *"   # 03:30 UTC, quiet hours, well clear of the hourly capture
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      max_calls:
+        description: "Maximum OpenSky API calls (aircraft-days) this run"
+        required: false
+        default: "150"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opensky-backfill
+  cancel-in-progress: false
 
 jobs:
   backfill:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -28,4 +41,5 @@ jobs:
           OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
           OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
           SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          BACKFILL_MAX_CALLS: ${{ github.event.inputs.max_calls || '150' }}
         run: python -m scraper.opensky_backfill

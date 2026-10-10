@@ -1,11 +1,16 @@
-# Hourly capture of VIE/BTS aircraft movements via OpenSky.
-# Separate from scrape.yml (weekly passenger-count scraper) because this
-# needs a much more frequent schedule -- OpenSky's /flights/* endpoints only
-# accept a ~1 hour historical window, so we must poll roughly hourly to avoid
-# gaps (see opensky_scraper.py module docstring for details).
+# Capture of VIE/BTS aircraft DEPARTURES via OpenSky.
 #
-# Runs at 7 minutes past every hour (avoiding :00 sharp, when many other
-# scheduled jobs across GitHub fire and queueing delays are more likely).
+# OpenSky's /flights/departure only accepts a window of roughly the last hour, so
+# this job must run about hourly or movements are lost for good (see the
+# opensky_scraper.py docstring).
+#
+# IMPORTANT: GitHub's own `schedule:` trigger is best-effort. Under load it
+# skips or delays runs -- measured on this repo (Aug-Oct 2026): ~1 run per 5 hours
+# instead of 1 per hour. The cron below stays as a fallback, but the reliable
+# trigger is an external scheduler calling `workflow_dispatch` every hour;
+# see docs/OPERATIONS.md ("Reliable hourly capture").
+#
+# Runs at minute 7 to avoid the :00 rush when many scheduled jobs start at once.
 
 name: Hourly OpenSky capture
 
@@ -14,15 +19,26 @@ on:
     - cron: "7 * * * *"
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
+# Never run two captures at once (a late scheduled run plus an external trigger
+# would otherwise double the OpenSky credit spend); a waiting run is superseded.
+concurrency:
+  group: opensky-capture
+  cancel-in-progress: false
+
 jobs:
   capture:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: pip install -r requirements.txt

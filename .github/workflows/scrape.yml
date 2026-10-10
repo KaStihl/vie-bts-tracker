@@ -1,5 +1,8 @@
-# Weekly VIE/BTS monthly traffic scrape. Writes directly to Supabase now
-# (see db.py) -- no longer commits a local traffic.db file to the repo.
+# Weekly VIE/BTS monthly traffic scrape. Writes directly to Supabase (see db.py).
+# VIE and BTS only publish monthly figures once a month, so most runs just
+# re-confirm known rows (the upsert is idempotent); weekly keeps the lag after a
+# new release to a few days at most. Fails (non-zero exit) if a source page
+# returns nothing, so a changed website layout does not go unnoticed.
 
 name: Weekly traffic scrape
 
@@ -8,15 +11,24 @@ on:
     - cron: "0 6 * * 1"
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
+concurrency:
+  group: traffic-scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: pip install -r requirements.txt

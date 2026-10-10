@@ -5,7 +5,8 @@ Bratislava (BTS) airports, built to examine how low-cost carrier capacity has
 shifted between the two following Austria's aviation tax and Wizz Air's exit
 from Vienna in March 2026.
 
-
+**Live dashboard:** [fkslab.com/dashboard](https://fkslab.com/dashboard/)  
+**Built by:** [FK's Lab](https://fkslab.com) — personal data projects: Power BI, automation, analytics
 
 ---
 
@@ -56,14 +57,16 @@ database live.
   flagged for manual review before being marked verified.
 - **Carrier-level data** (which airline, which route) comes from OpenSky
   Network aircraft movements, not from passenger counts. This part of the
-  dataset is new (collection started September 2026) and still shallow —
+  dataset is new (collection started mid-August 2026) and still shallow —
   it will appear on the dashboard once it has enough history to be
   meaningful.
 
 ## Running it yourself
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt        # runtime
+pip install -r requirements-dev.txt    # + pytest
+python -m pytest -q                    # parser / OpenSky unit tests
 ```
 
 Set the following as environment variables (or GitHub Actions secrets):
@@ -73,7 +76,10 @@ Set the following as environment variables (or GitHub Actions secrets):
 | `SUPABASE_CONNECTION_STRING` | Postgres connection (all scrapers) |
 | `OPENSKY_CLIENT_ID` / `OPENSKY_CLIENT_SECRET` | OpenSky API (create at [opensky-network.org](https://opensky-network.org), Account → API Client) |
 
-Database schema: see the `*_schema.sql` files in `scraper/`.
+Database schema: see the `*_schema.sql` files in `scraper/`; one-off clean-ups are in
+`scraper/migrations/`. Scheduling, the health check and the runbook are in
+[`docs/OPERATIONS.md`](docs/OPERATIONS.md); the Power BI report is described in
+[`PBI/README.md`](PBI/README.md).
 
 ```bash
 python -m scraper.main                    # VIE/BTS monthly press releases
@@ -91,4 +97,4 @@ itself.
 
 ## Questions / found an error in the data?
 
-Open an issue on this repo, or reach out via [fkconsult.eu](https://fkconsult.eu).
+Open an issue on this repo, or reach out via [fkslab.com/contact](https://fkslab.com/contact/).

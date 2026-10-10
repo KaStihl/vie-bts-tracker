@@ -1,22 +1,37 @@
-# Daily capture of arrivals (48h-24h ago window) -- see opensky_arrivals.py
-# docstring for why this can't be hourly like departures.
+# Daily capture of ARRIVALS for whole UTC days (today-2 and today-3).
+# OpenSky only serves arrivals once their day has been batch-processed, so this
+# cannot be hourly like departures -- see opensky_arrivals.py.
 
 name: Daily OpenSky arrivals capture
 
 on:
   schedule:
     - cron: "45 4 * * *"   # 04:45 UTC, staggered from the backfill job (03:30)
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "How many complete UTC days to fetch (to catch up after an outage)"
+        required: false
+        default: "2"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: opensky-arrivals
+  cancel-in-progress: false
 
 jobs:
   capture-arrivals:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -26,4 +41,5 @@ jobs:
           OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
           OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
           SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          ARRIVAL_DAYS: ${{ github.event.inputs.days || '2' }}
         run: python -m scraper.opensky_arrivals
