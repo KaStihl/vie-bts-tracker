@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 577.6541808225694,
+            "y": 217.902003
+          },
+          "nodeIndex": "public airports",
+          "nodeLineageTag": "a55a0af0-7827-47b5-ba58-aec4f99669e7",
+          "size": {
+            "height": 331.43121999999994,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 951.71454102418159,
+            "y": 0
+          },
+          "nodeIndex": "public annual_traffic",
+          "nodeLineageTag": "5b37fbb6-0585-40ea-9443-cbf46630ca62",
+          "size": {
+            "height": 426.61355139975547,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 139.65909134792369,
+            "y": 0
+          },
+          "nodeIndex": "public carrier_movements",
+          "nodeLineageTag": "5ddf0241-5d68-4f68-8417-8202d5542f0c",
+          "size": {
+            "height": 667.05005698153309,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 907.708960411937,
+            "y": 498.21558420544613
+          },
+          "nodeIndex": "public monthly_traffic",
+          "nodeLineageTag": "5c067abb-4acf-49c0-be8c-98b71d7eb61c",
+          "size": {
+            "height": 475.98290403224195,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1440.5175000606168,
+            "y": 291.31003960060241
+          },
+          "nodeIndex": "Meausre",
+          "nodeLineageTag": "5980967d-8e83-4b67-b497-ce932a73b583",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 360.2800185848107,
+            "y": 794.76534044528739
+          },
+          "nodeIndex": "DateTable",
+          "nodeLineageTag": "cfb45d06-fed2-4e3c-8c35-afbb1825d4c3",
+          "size": {
+            "height": 302.70657465588693,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 63.287087723234045,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

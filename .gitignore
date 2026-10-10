@@ -26,3 +26,7 @@ Thumbs.db
 
 # Candidate reports produced by PBI/tools/patch_report.py --out ... (commit only after Desktop opens them)
 PBI/*.patched.pbix
+
+# Power BI project: local-only files (data cache, per-machine settings)
+PBI/**/.pbi/cache.abf
+PBI/**/.pbi/localSettings.json

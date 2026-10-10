@@ -1,0 +1,256 @@
+/// OpenSky aircraft movements captured for LOWW/LZIB. Coverage is partial (see [Capture Coverage %]).
+table 'public carrier_movements'
+	lineageTag: 5ddf0241-5d68-4f68-8417-8202d5542f0c
+
+	column id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: efdecf4e-e4d3-47d6-8e92-1adbd8cd3e9f
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column airport_code
+		dataType: string
+		lineageTag: a2528806-902e-4fc0-a0ce-f0f19b078c95
+		summarizeBy: none
+		sourceColumn: airport_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column icao
+		dataType: string
+		lineageTag: f07e871e-8cec-4f6b-9d0c-b4b113b4b3d9
+		summarizeBy: none
+		sourceColumn: icao
+
+		annotation SummarizationSetBy = Automatic
+
+	column direction
+		dataType: string
+		lineageTag: c5aa6bf5-5183-4ccf-a404-6926ec1f12ad
+		summarizeBy: none
+		sourceColumn: direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column callsign
+		dataType: string
+		lineageTag: cf003069-6ff8-4e33-882a-b1aecc21d2b5
+		summarizeBy: none
+		sourceColumn: callsign
+
+		annotation SummarizationSetBy = Automatic
+
+	column airline
+		dataType: string
+		lineageTag: 7402c10a-d812-43f0-9553-6a0f7c1cb134
+		summarizeBy: none
+		sourceColumn: airline
+
+		annotation SummarizationSetBy = Automatic
+
+	column other_airport
+		dataType: string
+		lineageTag: af17c6dd-3278-400e-b753-ae4049154836
+		summarizeBy: none
+		sourceColumn: other_airport
+
+		annotation SummarizationSetBy = Automatic
+
+	column icao24
+		dataType: string
+		isHidden
+		lineageTag: 2f2f0937-c7b2-4bc5-8804-28605ac9a014
+		summarizeBy: none
+		sourceColumn: icao24
+
+		annotation SummarizationSetBy = Automatic
+
+	column movement_time
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 01b679df-8dd5-41a4-876d-ad766315187f
+		summarizeBy: none
+		sourceColumn: movement_time
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_url
+		dataType: string
+		isHidden
+		lineageTag: 787ef53e-e605-4de6-a25e-fc02af47fe82
+		summarizeBy: none
+		sourceColumn: source_url
+
+		annotation SummarizationSetBy = Automatic
+
+	column scraped_at
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 257fd93a-35f6-4c04-ad44-fdea6d860122
+		summarizeBy: none
+		sourceColumn: scraped_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: 58e6e67e-e08c-4b4e-bdb7-b6286fff88e7
+		summarizeBy: none
+		sourceColumn: Month Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a47730ac-9d22-4536-b9c3-7d261910996f
+		summarizeBy: none
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 554d1bfa-d571-4871-81ef-ee1a88312861
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 5487cfa3-a8ee-4db0-8c83-224b14fd7477
+		summarizeBy: none
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Week of Month'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 707414e0-b7d5-4643-94fb-d5ed65b96585
+		summarizeBy: none
+		sourceColumn: Week of Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day Name'
+		dataType: string
+		lineageTag: 003c315b-d7ce-4466-908e-dff619ea6e83
+		summarizeBy: none
+		sourceColumn: Day Name
+		sortByColumn: 'Day of Week'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 73ea729e-7dde-4d81-b9ae-0aa06de61973
+		summarizeBy: none
+		sourceColumn: Day
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hour
+		dataType: int64
+		formatString: 0
+		lineageTag: d399f80f-2559-411e-aee2-ee4422d30156
+		summarizeBy: none
+		sourceColumn: Hour
+
+		annotation SummarizationSetBy = Automatic
+
+	column Minute
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e880cfa3-b66b-4351-9080-e1593cdeed32
+		summarizeBy: none
+		sourceColumn: Minute
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time
+		dataType: dateTime
+		isHidden
+		formatString: Long Time
+		lineageTag: 03412688-cbb8-4259-b6a6-f971b1bdac13
+		summarizeBy: none
+		sourceColumn: Time
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column 'Destination Country' =
+			
+			LOOKUPVALUE('public airports'[country], 'public airports'[icao_code], 'public carrier_movements'[other_airport])
+		lineageTag: f3ee86a6-df43-4711-9a50-5c7e1ef330b2
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Destination City' =
+			
+			LOOKUPVALUE('public airports'[city], 'public airports'[icao_code], 'public carrier_movements'[other_airport])
+		lineageTag: ec046dbc-28b0-48a9-b5d7-7436907cde09
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date = DATE(YEAR([movement_time]), MONTH([movement_time]), DAY([movement_time]))
+		formatString: Short Date
+		lineageTag: f355d7e6-53e7-4531-b797-0e1276e00f21
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Day of Week'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f79e1254-30ee-437a-a4cd-605ac5f4a1e3
+		summarizeBy: none
+		sourceColumn: Day of Week
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'public carrier_movements' = m
+		mode: import
+		source =
+				let
+				  Source = PostgreSQL.Database("aws-0-eu-central-1.pooler.supabase.com", "postgres"),
+				  #"Navigation 1" = Source{[Schema = "public", Item = "carrier_movements"]}[Data],
+				    #"Inserted Month Name" = Table.AddColumn(#"Navigation 1", "Month Name", each Date.MonthName([movement_time]), type text),
+				    #"Inserted Month" = Table.AddColumn(#"Inserted Month Name", "Month", each Date.Month([movement_time]), Int64.Type),
+				    #"Inserted Year" = Table.AddColumn(#"Inserted Month", "Year", each Date.Year([movement_time]), Int64.Type),
+				    #"Inserted Quarter" = Table.AddColumn(#"Inserted Year", "Quarter", each Date.QuarterOfYear([movement_time]), Int64.Type),
+				    #"Inserted Week of Month" = Table.AddColumn(#"Inserted Quarter", "Week of Month", each Date.WeekOfMonth([movement_time]), Int64.Type),
+				    #"Inserted Day Name" = Table.AddColumn(#"Inserted Week of Month", "Day Name", each Date.DayOfWeekName([movement_time]), type text),
+				    #"Inserted Day" = Table.AddColumn(#"Inserted Day Name", "Day", each Date.Day([movement_time]), Int64.Type),
+				    #"Inserted Hour" = Table.AddColumn(#"Inserted Day", "Hour", each Time.Hour([movement_time]), Int64.Type),
+				    #"Inserted Minute" = Table.AddColumn(#"Inserted Hour", "Minute", each Time.Minute([movement_time]), Int64.Type),
+				    #"Inserted Time" = Table.AddColumn(#"Inserted Minute", "Time", each DateTime.Time([movement_time]), type time),
+				    #"Inserted Day of Week" = Table.AddColumn(#"Inserted Time", "Day of Week", each Date.DayOfWeek([movement_time]), Int64.Type)
+				in
+				  #"Inserted Day of Week"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

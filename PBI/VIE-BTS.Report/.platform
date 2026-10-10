@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "VIE-BTS"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4c8a16b6-39bb-45a4-bff6-6522a52e8f9c"
+  }
+}

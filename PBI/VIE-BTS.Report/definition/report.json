@@ -1,0 +1,113 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY26SU07",
+      "reportVersionAtImport": {
+        "visual": "2.11.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "FKConsulting6380241216203667.json",
+      "reportVersionAtImport": {
+        "visual": "2.11.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          },
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "flowmap30CFDD5B92F848C88242B1E81C8C33C7",
+    "dualaxisscatter28D7CE5AE21DCB6E52F70233538A93EE",
+    "PBI_CV_25997FEB_F466_44FA_B562_AC4063283C4C",
+    "PBI_CV_9272D058_BEA0_476A_B090_A712545F92FA",
+    "ForceGraph1449359463895",
+    "BowtieChart1465021618681"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY26SU07",
+          "path": "BaseThemes/CY26SU07.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "BTS_Tracker_home_page7715730124669872.png",
+          "path": "BTS_Tracker_home_page7715730124669872.png",
+          "type": "Image"
+        },
+        {
+          "name": "BTS_Tracker_source_page700487359410155.png",
+          "path": "BTS_Tracker_source_page700487359410155.png",
+          "type": "Image"
+        },
+        {
+          "name": "BTS_Tracker44907614609917135.png",
+          "path": "BTS_Tracker44907614609917135.png",
+          "type": "Image"
+        },
+        {
+          "name": "FKConsulting6380241216203667.json",
+          "path": "FKConsulting6380241216203667.json",
+          "type": "CustomTheme"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": true,
+    "useDefaultAggregateDisplayName": true
+  }
+}

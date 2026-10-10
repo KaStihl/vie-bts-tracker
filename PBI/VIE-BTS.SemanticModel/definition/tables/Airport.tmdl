@@ -1,0 +1,48 @@
+/// The two airports being compared. Related to monthly, annual and movement facts on the short code (VIE/BTS) so one Airport filter drives every page.
+table Airport
+	lineageTag: a8dc911a-849b-427e-ae20-006829706bf6
+
+	column 'Airport Code'
+		dataType: string
+		lineageTag: ff5991ee-e6f1-49ca-9a75-513fae5a5aea
+		summarizeBy: none
+		sourceColumn: [Airport Code]
+
+	column ICAO
+		dataType: string
+		lineageTag: 04011505-7a8e-4987-8384-d15d631d62d8
+		summarizeBy: none
+		sourceColumn: [ICAO]
+
+	column Airport
+		dataType: string
+		lineageTag: 4d19cf4b-7faf-4ded-8457-1e25f322bf46
+		summarizeBy: none
+		sourceColumn: [Airport]
+
+	column City
+		dataType: string
+		lineageTag: fa5390ff-a0bb-47d1-a752-b05bcb488061
+		summarizeBy: none
+		sourceColumn: [City]
+
+	column Country
+		dataType: string
+		lineageTag: 46584584-6384-4727-ad8b-69bcfd3c61f3
+		summarizeBy: none
+		sourceColumn: [Country]
+
+	partition Airport = calculated
+		source =
+				DATATABLE(
+				    "Airport Code", STRING,
+				    "ICAO", STRING,
+				    "Airport", STRING,
+				    "City", STRING,
+				    "Country", STRING,
+				    {
+				        { "VIE", "LOWW", "Vienna International Airport", "Vienna", "Austria" },
+				        { "BTS", "LZIB", "M. R. Štefánik Airport", "Bratislava", "Slovakia" }
+				    }
+				)
+

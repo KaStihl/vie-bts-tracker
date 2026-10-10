@@ -1,0 +1,95 @@
+/// OurAirports reference list (ICAO code -> name/city/country); used for movement destinations.
+table 'public airports'
+	lineageTag: a55a0af0-7827-47b5-ba58-aec4f99669e7
+
+	column icao_code
+		dataType: string
+		lineageTag: 72363753-905b-4534-bf9d-4e211feef5a2
+		summarizeBy: none
+		sourceColumn: icao_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column iata_code
+		dataType: string
+		lineageTag: 6668f330-467f-4e4f-8bc5-83e9c39780c5
+		summarizeBy: none
+		sourceColumn: iata_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: a6973463-aeea-49bb-a21e-922e582b73cb
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: eadc54f6-c194-43a7-8a15-c167556d7f83
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: f7fe8415-d4ea-4d3b-b554-67f43d175ad1
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		lineageTag: 59e2879d-1987-498a-911c-e2e7a14f8b3b
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column airport_type
+		dataType: string
+		lineageTag: a9945df4-302e-442b-8ce1-75487791cd23
+		summarizeBy: none
+		sourceColumn: airport_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column latitude
+		dataType: double
+		lineageTag: 3fdb3e8f-2b9f-4da4-8868-171a95c98beb
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitude
+		dataType: double
+		lineageTag: 3fd8919e-85ae-4d4d-98d1-71844329b70b
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'public airports' = m
+		mode: import
+		source =
+				let
+				  Source = PostgreSQL.Database("aws-0-eu-central-1.pooler.supabase.com", "postgres"),
+				  #"Navigation 1" = Source{[Schema = "public", Item = "airports"]}[Data]
+				in
+				  #"Navigation 1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

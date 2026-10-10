@@ -1,0 +1,139 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "5dd0620b20ce526b759b",
+  "position": {
+    "x": 1019.3333333333334,
+    "y": 760.66666666666663,
+    "z": 20000,
+    "height": 282.66666666666669,
+    "width": 324,
+    "tabOrder": 20000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "airport_code"
+                }
+              },
+              "queryRef": "public carrier_movements.airport_code",
+              "nativeQueryRef": "airport_code",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "airline"
+                }
+              },
+              "queryRef": "public carrier_movements.airline",
+              "nativeQueryRef": "airline"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Meausre"
+                    }
+                  },
+                  "Property": "Departures Only"
+                }
+              },
+              "queryRef": "Meausre.Departures Only",
+              "nativeQueryRef": "Departures Only"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Meausre"
+                  }
+                },
+                "Property": "Departures Only"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "5019ebcdf3af662e838d",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Meausre"
+              }
+            },
+            "Property": "Departures Only"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "7e5d7a5a604df8b6296f",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "airport_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "646e0185d28deecd9367",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "airline"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

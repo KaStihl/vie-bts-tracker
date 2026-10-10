@@ -1,0 +1,232 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "1576bdcd5597e754c801",
+  "position": {
+    "x": 1355.3333333333333,
+    "y": 304,
+    "z": 23000,
+    "height": 739.33333333333337,
+    "width": 554.66666666666663,
+    "tabOrder": 23000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "airport_code"
+                }
+              },
+              "queryRef": "public carrier_movements.airport_code",
+              "nativeQueryRef": "airport_code"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "Destination City"
+                }
+              },
+              "queryRef": "public carrier_movements.Destination City",
+              "nativeQueryRef": "Destination City"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Meausre"
+                    }
+                  },
+                  "Property": "Total Movements"
+                }
+              },
+              "queryRef": "Meausre.Total Movements",
+              "nativeQueryRef": "Total Movements"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "direction"
+                }
+              },
+              "queryRef": "public carrier_movements.direction",
+              "nativeQueryRef": "direction"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "public carrier_movements"
+                    }
+                  },
+                  "Property": "airline"
+                }
+              },
+              "queryRef": "public carrier_movements.airline",
+              "nativeQueryRef": "airline"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Meausre"
+                  }
+                },
+                "Property": "Total Movements"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "03770924997450c75e87",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "airport_code"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "p",
+              "Entity": "public carrier_movements",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "p"
+                          }
+                        },
+                        "Property": "airport_code"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'BTS'"
+                        }
+                      }
+                    ],
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'VIE'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "b0d088c22038794b9f26",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "Destination City"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "f4ea5b3dab574c6b95a0",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Meausre"
+              }
+            },
+            "Property": "Total Movements"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c637bfd4ba54e9ff8a88",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "direction"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "8d4e3b124a9d231f66b8",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "public carrier_movements"
+              }
+            },
+            "Property": "airline"
+          }
+        },
+        "type": "Categorical"
+      }
+    ]
+  }
+}

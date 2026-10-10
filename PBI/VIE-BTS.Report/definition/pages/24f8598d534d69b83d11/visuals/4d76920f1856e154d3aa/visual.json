@@ -1,0 +1,148 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "4d76920f1856e154d3aa",
+  "position": {
+    "x": 316.15780445969125,
+    "y": 238.76500857632934,
+    "z": 16001,
+    "height": 694.88850771869636,
+    "width": 1526.4493996569468,
+    "tabOrder": 16001
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "VIE ⇄ BTS Aviation Tracker",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontSize": "32pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "This dashboard tracks how low-cost carrier capacity has shifted between Vienna (VIE) and Bratislava (BTS) ",
+                    "textStyle": {
+                      "fontSize": "24pt"
+                    }
+                  },
+                  {
+                    "value": " "
+                  },
+                  {
+                    "value": "airports, following Austria's aviation tax and Wizz Air's exit from Vienna in March 2026.",
+                    "textStyle": {
+                      "fontSize": "24pt"
+                    }
+                  }
+                ],
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "It's for anyone following the Vienna–Bratislava aviation story — and for a look at how the underlying data pipeline is built. This project also serves as a public case study for FK Consult's BI and data engineering work: official sources, verified data, transparent methodology.",
+                    "textStyle": {
+                      "fontStyle": "italic",
+                      "fontSize": "24pt"
+                    }
+                  }
+                ],
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Data is collected from official press releases and annual reports from both airports — not estimates. Automated where possible, manually reviewed where sources are less structured.",
+                    "textStyle": {
+                      "fontStyle": "italic",
+                      "fontSize": "20pt"
+                    }
+                  }
+                ],
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "This version includes a verified aggregate trend (years of history). A more detailed breakdown by individual airline is in progress — collected from real aircraft movements (OpenSky Network); the history is still short and growing daily. ",
+                    "textStyle": {
+                      "fontStyle": "italic",
+                      "fontSize": "20pt"
+                    }
+                  }
+                ],
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "This section will be added once it has enough depth to be meaningful.\"",
+                    "textStyle": {
+                      "fontStyle": "italic",
+                      "fontSize": "20pt"
+                    }
+                  }
+                ],
+                "indent": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
