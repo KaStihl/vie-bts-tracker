@@ -297,7 +297,7 @@ def total_chart(x, y, w, h, z):
                       {"properties": {"fill": color(VIE)}, "selector": series_selector("VIE")}]
     o["legend"] = legend()
     o.pop("seriesLabels", None)
-    cont = container("Passengers per month", "Markers are the months an airport actually published  ·  linear scale", pad=16, title_size=16,
+    cont = container("Passengers per month", "Each marker is a month with data (airport release, else Eurostat)  ·  linear scale", pad=16, title_size=16,
                      alt="Line chart: monthly passengers at Vienna (about 2 to 3 million) and Bratislava (0.1 to 0.6 million) since January 2024.")
     return place("chart-total", d, x, y, w, h, z, cont)
 

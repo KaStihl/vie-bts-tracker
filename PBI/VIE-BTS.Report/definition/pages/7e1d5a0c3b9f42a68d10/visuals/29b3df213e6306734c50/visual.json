@@ -756,7 +756,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Markers are the months an airport actually published  ·  linear scale'"
+                  "Value": "'Each marker is a month with data (airport release, else Eurostat)  ·  linear scale'"
                 }
               }
             },
