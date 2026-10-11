@@ -62,19 +62,6 @@
         },
         {
           "location": {
-            "x": 1440.5175000606168,
-            "y": 291.31003960060241
-          },
-          "nodeIndex": "Meausre",
-          "nodeLineageTag": "5980967d-8e83-4b67-b497-ce932a73b583",
-          "size": {
-            "height": 104,
-            "width": 234
-          },
-          "zIndex": 0
-        },
-        {
-          "location": {
             "x": 360.2800185848107,
             "y": 794.76534044528739
           },
@@ -82,6 +69,44 @@
           "nodeLineageTag": "cfb45d06-fed2-4e3c-8c35-afbb1825d4c3",
           "size": {
             "height": 302.70657465588693,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1584.8584087126931,
+            "y": 448.73595755058716
+          },
+          "nodeIndex": "Airport",
+          "nodeLineageTag": "a8dc911a-849b-427e-ae20-006829706bf6",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1868.8584087126931,
+            "y": 472.73595755058716
+          },
+          "nodeIndex": "Query",
+          "nodeLineageTag": "72cd1ec4-bd07-469f-ae08-4083a68052f7",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1440.5175000606168,
+            "y": 291.31003960060241
+          },
+          "nodeIndex": "_Measures",
+          "size": {
+            "height": 104,
             "width": 234
           },
           "zIndex": 0

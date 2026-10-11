@@ -18,7 +18,7 @@ Airport (VIE, BTS) 1 --> * public monthly_traffic   --> DateTable (date table)
                    1 --> * public annual_traffic
                    1 --> * public carrier_movements --> DateTable
 public airports  1 --> * public carrier_movements   (origin ICAO active, other_airport inactive)
-Meausre  = measure container (typo kept on purpose, see below)      Query = refresh timestamp
+_Measures  = measure container (typo kept on purpose, see below)      Query = refresh timestamp
 ```
 
 ### Fixed in October 2026
@@ -34,7 +34,7 @@ Meausre  = measure container (typo kept on purpose, see below)      Query = refr
 | 7 | No view of how complete the OpenSky data is | `[Capture Coverage %]` (≈47 % in Oct 2026), `[Departure Hours With Data]`, `[Last Movement Captured]` |
 | 8 | `DateTable` not marked as date table; `rows`, `rows2`, `rows3` junk measures; unused `_num` column; id/year/% columns summing by default; technical columns visible | cleaned up; percent columns formatted as literal `%` |
 
-**Rename `Meausre` -> `_Measures` in Power BI Desktop** (Model view). It is a typo, but report
+**Rename `_Measures` -> `_Measures` in Power BI Desktop** (Model view). It is a typo, but report
 visuals reference the name, and only Desktop can rename it *and* update the visuals.
 
 ### Re-applying / auditing

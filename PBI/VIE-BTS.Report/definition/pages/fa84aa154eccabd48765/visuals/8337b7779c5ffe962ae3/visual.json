@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "8337b7779c5ffe962ae3",
   "position": {
     "x": 990.14028056112227,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Ryanair Share Trend Check"
                 }
               },
-              "queryRef": "Meausre.Ryanair Share Trend Check",
+              "queryRef": "_Measures.Ryanair Share Trend Check",
               "nativeQueryRef": "Ryanair Share Trend Check"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Ryanair Share Trend Check"

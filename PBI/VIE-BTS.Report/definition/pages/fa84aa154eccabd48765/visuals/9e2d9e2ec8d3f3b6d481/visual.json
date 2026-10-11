@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "9e2d9e2ec8d3f3b6d481",
   "position": {
     "x": 534.82965931863725,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Movements Ryanair"
                 }
               },
-              "queryRef": "Meausre.Movements Ryanair",
+              "queryRef": "_Measures.Movements Ryanair",
               "nativeQueryRef": "Movements Ryanair"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Movements Ryanair"

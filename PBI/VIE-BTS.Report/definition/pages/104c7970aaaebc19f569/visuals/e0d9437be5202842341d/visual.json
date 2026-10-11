@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "e0d9437be5202842341d",
   "position": {
     "x": 951.33333333333337,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Latest Passengers"
                 }
               },
-              "queryRef": "Meausre.BTS Latest Passengers",
+              "queryRef": "_Measures.BTS Latest Passengers",
               "nativeQueryRef": "BTS PAX",
               "displayName": "BTS PAX"
             }
@@ -40,7 +40,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "BTS Latest Passengers"
@@ -98,7 +98,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         },
         {
@@ -140,7 +140,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -154,7 +154,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -182,7 +182,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Passengers"
+            "metadata": "_Measures.BTS Latest Passengers"
           }
         }
       ],
@@ -250,7 +250,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -283,7 +283,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -316,7 +316,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Passengers"
+            "metadata": "_Measures.BTS Latest Passengers"
           }
         }
       ],
@@ -346,7 +346,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ],
@@ -381,7 +381,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -414,7 +414,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -607,7 +607,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ]

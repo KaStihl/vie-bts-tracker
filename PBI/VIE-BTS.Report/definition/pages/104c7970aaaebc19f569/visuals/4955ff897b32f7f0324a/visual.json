@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "4955ff897b32f7f0324a",
   "position": {
     "x": 1609.3333333333333,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Rozdiel v trende"
                 }
               },
-              "queryRef": "Meausre.Rozdiel v trende",
+              "queryRef": "_Measures.Rozdiel v trende",
               "nativeQueryRef": "Diff YoY %",
               "displayName": "Diff YoY %"
             }
@@ -40,7 +40,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Rozdiel v trende"
@@ -105,7 +105,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         },
         {
@@ -147,7 +147,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -161,7 +161,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         }
       ],
@@ -229,7 +229,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -262,7 +262,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -295,7 +295,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         }
       ],
@@ -325,7 +325,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -339,7 +339,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         }
       ],
@@ -374,7 +374,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -407,7 +407,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -619,7 +619,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ]

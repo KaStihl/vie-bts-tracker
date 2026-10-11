@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "8cf628781aed49cc0a4a",
   "position": {
     "x": 1052,
@@ -57,13 +57,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Total Movements"
                 }
               },
-              "queryRef": "Meausre.Total Movements",
+              "queryRef": "_Measures.Total Movements",
               "nativeQueryRef": "Total Movements"
             }
           ]
@@ -76,7 +76,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Total Movements"

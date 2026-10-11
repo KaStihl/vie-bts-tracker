@@ -33,3 +33,4 @@ PBI/**/.pbi/localSettings.json
 
 # generated background pictures (the registered copies live in VIE-BTS.Report/StaticResources)
 PBI/_art/
+PBI/**/.pbi/unappliedChanges.json

@@ -1,5 +1,5 @@
 /// Measure container. NOTE: the name is a typo of 'Measures' but report visuals reference it - rename it in Power BI Desktop (Model view), which updates visuals automatically.
-table Meausre
+table _Measures
 	lineageTag: 5980967d-8e83-4b67-b497-ce932a73b583
 
 	measure 'Total Movements' = COUNTROWS('public carrier_movements')
@@ -268,6 +268,38 @@ table Meausre
 		displayFolder: monthly_traffic
 		lineageTag: a20cb7e7-3b50-46cd-9708-56254ab5f23b
 
+	/// Distinct date+hour slots (05:00-21:59, assumed UTC) that contain at least one captured departure.
+	measure 'Departure Hours With Data' =
+			COUNTROWS(
+			    SUMMARIZE(
+			        FILTER(
+			            'public carrier_movements',
+			            'public carrier_movements'[direction] = "departure"
+			                && 'public carrier_movements'[Hour] >= 5
+			                && 'public carrier_movements'[Hour] <= 21
+			        ),
+			        'public carrier_movements'[Date],
+			        'public carrier_movements'[Hour]
+			    )
+			)
+		formatString: 0
+		displayFolder: data_quality
+		lineageTag: f5e13720-5a07-4aea-b1f2-a1915869e147
+
+	/// Share of daytime hours (17 per day) with at least one captured departure. Far below 100% means the hourly OpenSky job missed runs (movements in the gaps are lost for good), so absolute movement counts are UNDERCOUNTED; shares between airlines are still usable.
+	measure 'Capture Coverage %' =
+			VAR _days = DATEDIFF(MIN('public carrier_movements'[Date]), MAX('public carrier_movements'[Date]), DAY) + 1
+			RETURN DIVIDE([Departure Hours With Data], _days * 17)
+		formatString: 0%
+		displayFolder: data_quality
+		lineageTag: 6d1d10f2-9ede-4097-afb5-11b38db5c96d
+
+	/// Timestamp of the newest captured movement - tells readers how fresh the carrier data is.
+	measure 'Last Movement Captured' = MAX('public carrier_movements'[movement_time])
+		formatString: dd mmm yyyy hh:mm
+		displayFolder: data_quality
+		lineageTag: 4130e412-30c6-415e-a5ff-1b617ba4db8b
+
 	/// One-line takeaway shown under the page title.
 	measure Headline =
 			VAR _bts = [BTS Latest YoY]
@@ -278,26 +310,22 @@ table Meausre
 		lineageTag: 1ecf024e-a05e-4565-8d9c-90d462f099b8
 
 	/// Red when Vienna shrinks, green when it grows.
-	measure 'VIE YoY Color' =
-			IF([VIE Latest YoY] < 0, "#FF7B7B", "#3DDC97")
+	measure 'VIE YoY Color' = IF([VIE Latest YoY] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 53fbd417-1da6-4aec-979e-c9cfa7061180
 
 	/// Red when Bratislava shrinks, green when it grows.
-	measure 'BTS YoY Color' =
-			IF([BTS Latest YoY] < 0, "#FF7B7B", "#3DDC97")
+	measure 'BTS YoY Color' = IF([BTS Latest YoY] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 5ce29685-d0e8-4bdf-b88c-a6efa2a439bc
 
 	/// Footer stamp: when the model was last refreshed, in one piece.
-	measure 'Refresh Label' =
-			"Last refresh (UTC):  " & FORMAT(MAX('Query'[Column1]), "d mmm yyyy  ·  HH:mm")
+	measure 'Refresh Label' = "Last refresh (UTC):  " & FORMAT(MAX('Query'[Column1]), "d mmm yyyy  ·  HH:mm")
 		displayFolder: report
 		lineageTag: 5f4f7eb9-4a24-4647-a0c9-160a9c1fe085
 
 	/// How many times larger Vienna is than Bratislava in the latest month.
-	measure 'Size Ratio' =
-			"Vienna is " & FORMAT(DIVIDE([VIE Latest Passengers], [BTS Latest Passengers]), "0.0") & "x larger"
+	measure 'Size Ratio' = "Vienna is " & FORMAT(DIVIDE([VIE Latest Passengers], [BTS Latest Passengers]), "0.0") & "x larger"
 		displayFolder: report
 		lineageTag: 5e322a5e-7cb5-47e1-beb5-066b66c660ba
 
@@ -319,15 +347,13 @@ table Meausre
 		lineageTag: 18720fcc-9217-40e6-8d63-3e0fe9ee3ed1
 
 	/// Vienna: change versus the previous release.
-	measure 'VIE MoM' =
-			DIVIDE([VIE Latest Passengers] - [VIE Prev Passengers], [VIE Prev Passengers])
+	measure 'VIE MoM' = DIVIDE([VIE Latest Passengers] - [VIE Prev Passengers], [VIE Prev Passengers])
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: report
 		lineageTag: c29c5dcf-4879-4f97-b267-886beb8a122b
 
 	/// Red when down, green when up (text colour, AA contrast on the card).
-	measure 'VIE MoM Color' =
-			IF([VIE MoM] < 0, "#FF7B7B", "#3DDC97")
+	measure 'VIE MoM Color' = IF([VIE MoM] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 6eb926cb-32fd-40f1-bd9e-bdffe9be2ea9
 
@@ -349,28 +375,24 @@ table Meausre
 		lineageTag: 27a7132b-8f59-49a6-a65d-3fed4b139a3b
 
 	/// Bratislava: change versus the previous release.
-	measure 'BTS MoM' =
-			DIVIDE([BTS Latest Passengers] - [BTS Prev Passengers], [BTS Prev Passengers])
+	measure 'BTS MoM' = DIVIDE([BTS Latest Passengers] - [BTS Prev Passengers], [BTS Prev Passengers])
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: report
 		lineageTag: d6f7b31a-0bcb-408a-a109-807a56dc52cc
 
 	/// Red when down, green when up (text colour, AA contrast on the card).
-	measure 'BTS MoM Color' =
-			IF([BTS MoM] < 0, "#FF7B7B", "#3DDC97")
+	measure 'BTS MoM Color' = IF([BTS MoM] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 85e76ac3-39ba-4921-bbb9-b4546010327d
 
 	/// Vienna: year-over-year change per month, still filtered by the Airport slicer (one measure per airport so each can be coloured by sign).
-	measure 'VIE YoY' =
-			CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "VIE"))
+	measure 'VIE YoY' = CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "VIE"))
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: report
 		lineageTag: 36752419-345a-4a37-85f9-b2b9deb6440b
 
 	/// Bratislava: year-over-year change per month, still filtered by the Airport slicer (one measure per airport so each can be coloured by sign).
-	measure 'BTS YoY' =
-			CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "BTS"))
+	measure 'BTS YoY' = CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "BTS"))
 		formatString: 0.00%;-0.00%;0.00%
 		displayFolder: report
 		lineageTag: 42d78d75-72e1-4502-b250-c6eb75abac4f
@@ -407,38 +429,6 @@ table Meausre
 		displayFolder: report
 		lineageTag: ec8666aa-4674-460b-a253-77742b562d49
 
-	/// Distinct date+hour slots (05:00-21:59, assumed UTC) that contain at least one captured departure.
-	measure 'Departure Hours With Data' =
-			COUNTROWS(
-			    SUMMARIZE(
-			        FILTER(
-			            'public carrier_movements',
-			            'public carrier_movements'[direction] = "departure"
-			                && 'public carrier_movements'[Hour] >= 5
-			                && 'public carrier_movements'[Hour] <= 21
-			        ),
-			        'public carrier_movements'[Date],
-			        'public carrier_movements'[Hour]
-			    )
-			)
-		formatString: 0
-		displayFolder: data_quality
-		lineageTag: f5e13720-5a07-4aea-b1f2-a1915869e147
-
-	/// Share of daytime hours (17 per day) with at least one captured departure. Far below 100% means the hourly OpenSky job missed runs (movements in the gaps are lost for good), so absolute movement counts are UNDERCOUNTED; shares between airlines are still usable.
-	measure 'Capture Coverage %' =
-			VAR _days = DATEDIFF(MIN('public carrier_movements'[Date]), MAX('public carrier_movements'[Date]), DAY) + 1
-			RETURN DIVIDE([Departure Hours With Data], _days * 17)
-		formatString: 0%
-		displayFolder: data_quality
-		lineageTag: 6d1d10f2-9ede-4097-afb5-11b38db5c96d
-
-	/// Timestamp of the newest captured movement - tells readers how fresh the carrier data is.
-	measure 'Last Movement Captured' = MAX('public carrier_movements'[movement_time])
-		formatString: dd mmm yyyy hh:mm
-		displayFolder: data_quality
-		lineageTag: 4130e412-30c6-415e-a5ff-1b617ba4db8b
-
 	column 1
 		dataType: string
 		isHidden
@@ -450,13 +440,15 @@ table Meausre
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Meausre = m
+	partition _Measures = m
 		mode: import
 		source =
 				let
 				  Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"1" = _t])
 				in
 				  Source
+
+	changedProperty = Name
 
 	annotation PBI_NavigationStepName = Navigation
 

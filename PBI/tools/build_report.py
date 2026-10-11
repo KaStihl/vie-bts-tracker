@@ -36,7 +36,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 PBI = Path(__file__).resolve().parents[1]
 REPORT = PBI / "VIE-BTS.Report" / "definition"
 RESOURCES = PBI / "VIE-BTS.Report" / "StaticResources" / "RegisteredResources"
-MODEL_TABLE = PBI / "VIE-BTS.SemanticModel" / "definition" / "tables" / "Meausre.tmdl"
+MODEL_TABLE = PBI / "VIE-BTS.SemanticModel" / "definition" / "tables" / "_Measures.tmdl"
 OLD_TREND = REPORT / "pages" / "104c7970aaaebc19f569"          # source of the cloned slicers / nav / button / charts
 HOME_ID, TREND_ID, SRC_ID = "3a9c61d2e8b74f05a1c7", "7e1d5a0c3b9f42a68d10", "b5f20e7a4d9c43168e3a"
 SCHEMA_VISUAL = "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json"
@@ -58,7 +58,7 @@ def D(n): return L(f"{n}D")
 def LONG(n): return L(f"{n}L")
 def B(flag): return L("true" if flag else "false")
 def color(h): return {"solid": {"color": {"expr": {"Literal": {"Value": f"'{h}'"}}}}}
-def measure_ref(prop): return {"Measure": {"Expression": {"SourceRef": {"Entity": "Meausre"}}, "Property": prop}}
+def measure_ref(prop): return {"Measure": {"Expression": {"SourceRef": {"Entity": "_Measures"}}, "Property": prop}}
 def measure_color(prop): return {"solid": {"color": {"expr": measure_ref(prop)}}}
 def vid(label): return hashlib.md5(f"vie-bts-v3:{label}".encode()).hexdigest()[:20]
 
@@ -169,9 +169,9 @@ GAP = P(" ", 5)
 def kpi_card(label, x, y, w, h, z, fields, title, subtitle=None, cols=3, rows=2, alt=None):
     projections, value_objs, label_objs = [], [], []
     for f in fields:
-        projections.append({"field": measure_ref(f["prop"]), "queryRef": f"Meausre.{f['prop']}",
+        projections.append({"field": measure_ref(f["prop"]), "queryRef": f"_Measures.{f['prop']}",
                             "nativeQueryRef": f["name"], "displayName": f["name"]})
-        sel = {"metadata": f"Meausre.{f['prop']}"}
+        sel = {"metadata": f"_Measures.{f['prop']}"}
         vp = {"fontSize": D(f.get("size", 32)), "fontFamily": L(FONT_SEMI), "horizontalAlignment": S(f.get("align", "left")),
               "fontColor": measure_color(f["color_measure"]) if f.get("color_measure") else color(f.get("hex", WHITE))}
         if f["kind"] == "pax":
@@ -199,7 +199,7 @@ def kpi_card(label, x, y, w, h, z, fields, title, subtitle=None, cols=3, rows=2,
 def text_card(label, x, y, w, h, z, prop, size, hex_, align="left"):
     """A single text measure with no card chrome (headline under the title, refresh stamp in the footer)."""
     body = {"visualType": "cardVisual", "query": {"queryState": {"Data": {"projections": [
-        {"field": measure_ref(prop), "queryRef": f"Meausre.{prop}", "nativeQueryRef": prop, "displayName": prop}]}}},
+        {"field": measure_ref(prop), "queryRef": f"_Measures.{prop}", "nativeQueryRef": prop, "displayName": prop}]}}},
         "objects": {
             "layout": [{"properties": {"style": S("Cards"), "columnCount": LONG(1), "rowCount": LONG(1), "autoGrid": B(False),
                                        "orientation": D(0), "calloutSize": D(0)}},
@@ -266,11 +266,11 @@ def yoy_chart(code, name, hex_, x, y, w, h, z, first):
     qs["queryState"].pop("Series", None)
     qs.pop("sortDefinition", None)
     qs["queryState"]["Y"]["projections"] = [
-        {"field": measure_ref(f"{code} YoY Up"), "queryRef": f"Meausre.{code} YoY Up", "nativeQueryRef": "Growth", "displayName": "Growth"},
-        {"field": measure_ref(f"{code} YoY Down"), "queryRef": f"Meausre.{code} YoY Down", "nativeQueryRef": "Decline", "displayName": "Decline"}]
+        {"field": measure_ref(f"{code} YoY Up"), "queryRef": f"_Measures.{code} YoY Up", "nativeQueryRef": "Growth", "displayName": "Growth"},
+        {"field": measure_ref(f"{code} YoY Down"), "queryRef": f"_Measures.{code} YoY Down", "nativeQueryRef": "Decline", "displayName": "Decline"}]
     o["dataPoint"] = [{"properties": {"fillTransparency": D(0), "borderShow": B(False)}},
-                      {"properties": {"fill": color(hex_)}, "selector": {"metadata": f"Meausre.{code} YoY Up"}},
-                      {"properties": {"fill": color(NEG)}, "selector": {"metadata": f"Meausre.{code} YoY Down"}}]
+                      {"properties": {"fill": color(hex_)}, "selector": {"metadata": f"_Measures.{code} YoY Up"}},
+                      {"properties": {"fill": color(NEG)}, "selector": {"metadata": f"_Measures.{code} YoY Down"}}]
     title = f"{name}: year-over-year growth"
     sub = ("% change vs the same month last year  ·  red = decline  ·  dashed line: Wizz Air opens its Bratislava base" if first
            else "% change vs the same month last year  ·  red = decline")

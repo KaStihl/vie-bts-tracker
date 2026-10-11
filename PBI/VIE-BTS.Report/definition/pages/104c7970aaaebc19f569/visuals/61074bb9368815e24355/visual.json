@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "61074bb9368815e24355",
   "position": {
     "x": 305,
@@ -57,13 +57,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "YoY Change PAX %"
                 }
               },
-              "queryRef": "Meausre.yoy_change",
+              "queryRef": "_Measures.yoy_change",
               "nativeQueryRef": "YoY Change PAX %"
             }
           ]
@@ -827,7 +827,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Meausre"
+                "Entity": "_Measures"
               }
             },
             "Property": "YoY Change PAX %"

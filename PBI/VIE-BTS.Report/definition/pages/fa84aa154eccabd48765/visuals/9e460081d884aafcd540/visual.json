@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "9e460081d884aafcd540",
   "position": {
     "x": 947.90645879732745,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "LCC Share (Ryanair+Wizz)"
                 }
               },
-              "queryRef": "Meausre.LCC Share (Ryanair+Wizz)",
+              "queryRef": "_Measures.LCC Share (Ryanair+Wizz)",
               "nativeQueryRef": "LCC Share (Ryanair+Wizz)"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "LCC Share (Ryanair+Wizz)"

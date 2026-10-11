@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "7085ebc832aaa0faa2d6",
   "position": {
     "x": 240,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE Latest Passengers"
                 }
               },
-              "queryRef": "Meausre.VIE Latest Passengers",
+              "queryRef": "_Measures.VIE Latest Passengers",
               "nativeQueryRef": "Passengers",
               "displayName": "Passengers"
             },
@@ -35,13 +35,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE Latest YoY"
                 }
               },
-              "queryRef": "Meausre.VIE Latest YoY",
+              "queryRef": "_Measures.VIE Latest YoY",
               "nativeQueryRef": "vs same month last year",
               "displayName": "vs same month last year"
             },
@@ -50,13 +50,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE Latest Month"
                 }
               },
-              "queryRef": "Meausre.VIE Latest Month",
+              "queryRef": "_Measures.VIE Latest Month",
               "nativeQueryRef": "Latest month",
               "displayName": "Latest month"
             },
@@ -65,13 +65,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE Prev Passengers"
                 }
               },
-              "queryRef": "Meausre.VIE Prev Passengers",
+              "queryRef": "_Measures.VIE Prev Passengers",
               "nativeQueryRef": "Previous release",
               "displayName": "Previous release"
             },
@@ -80,13 +80,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE MoM"
                 }
               },
-              "queryRef": "Meausre.VIE MoM",
+              "queryRef": "_Measures.VIE MoM",
               "nativeQueryRef": "Change vs previous release",
               "displayName": "Change vs previous release"
             },
@@ -95,13 +95,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE Prev Month"
                 }
               },
-              "queryRef": "Meausre.VIE Prev Month",
+              "queryRef": "_Measures.VIE Prev Month",
               "nativeQueryRef": "Previous month",
               "displayName": "Previous month"
             }
@@ -244,7 +244,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -277,7 +277,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Meausre"
+                          "Entity": "_Measures"
                         }
                       },
                       "Property": "VIE YoY Color"
@@ -288,7 +288,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -327,7 +327,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Month"
+            "metadata": "_Measures.VIE Latest Month"
           }
         },
         {
@@ -380,7 +380,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Prev Passengers"
+            "metadata": "_Measures.VIE Prev Passengers"
           }
         },
         {
@@ -413,7 +413,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Meausre"
+                          "Entity": "_Measures"
                         }
                       },
                       "Property": "VIE MoM Color"
@@ -424,7 +424,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE MoM"
+            "metadata": "_Measures.VIE MoM"
           }
         },
         {
@@ -463,7 +463,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Prev Month"
+            "metadata": "_Measures.VIE Prev Month"
           }
         }
       ],
@@ -511,7 +511,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         },
         {
@@ -557,7 +557,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest YoY"
+            "metadata": "_Measures.VIE Latest YoY"
           }
         },
         {
@@ -603,7 +603,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Month"
+            "metadata": "_Measures.VIE Latest Month"
           }
         },
         {
@@ -649,7 +649,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Prev Passengers"
+            "metadata": "_Measures.VIE Prev Passengers"
           }
         },
         {
@@ -695,7 +695,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE MoM"
+            "metadata": "_Measures.VIE MoM"
           }
         },
         {
@@ -741,7 +741,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Prev Month"
+            "metadata": "_Measures.VIE Prev Month"
           }
         }
       ],

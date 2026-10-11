@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "a7ed8eab54b6e3b06b50",
   "position": {
     "x": 420.66666666666669,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Movements Ryanair"
                 }
               },
-              "queryRef": "Meausre.Movements Ryanair",
+              "queryRef": "_Measures.Movements Ryanair",
               "nativeQueryRef": "Movements Ryanair"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Movements Ryanair"
@@ -97,7 +97,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         },
         {
@@ -139,7 +139,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ],
@@ -207,7 +207,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ],
@@ -237,7 +237,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ],
@@ -412,7 +412,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ],
@@ -444,7 +444,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE Latest Passengers"
+            "metadata": "_Measures.VIE Latest Passengers"
           }
         }
       ]

@@ -3335,7 +3335,7 @@ cultureInfo en-US
 			    "meausre": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre"
+			          "ConceptualEntity": "_Measures"
 			        }
 			      },
 			      "State": "Generated",
@@ -3350,7 +3350,7 @@ cultureInfo en-US
 			    "meausre.entity_1": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "1"
 			        }
 			      },
@@ -3369,7 +3369,7 @@ cultureInfo en-US
 			    "meausre.total_movements": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Total Movements"
 			        }
 			      },
@@ -3491,7 +3491,7 @@ cultureInfo en-US
 			    "meausre.departures_only": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Departures Only"
 			        }
 			      },
@@ -3607,7 +3607,7 @@ cultureInfo en-US
 			    "meausre.movements_ryanair": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Ryanair"
 			        }
 			      },
@@ -3629,7 +3629,7 @@ cultureInfo en-US
 			    "meausre.movements_wizz_air": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Wizz Air"
 			        }
 			      },
@@ -3745,7 +3745,7 @@ cultureInfo en-US
 			    "meausre.movements_austrian": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Austrian"
 			        }
 			      },
@@ -3767,7 +3767,7 @@ cultureInfo en-US
 			    "meausre.movements_other": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Other"
 			        }
 			      },
@@ -3783,7 +3783,7 @@ cultureInfo en-US
 			    "meausre.share_of_movements": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "% Share of Movements"
 			        }
 			      },
@@ -3889,7 +3889,7 @@ cultureInfo en-US
 			    "meausre.LCC_share_ryanairwizz": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "LCC Share (Ryanair+Wizz)"
 			        }
 			      },
@@ -3911,7 +3911,7 @@ cultureInfo en-US
 			    "meausre.days_tracked": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Days Tracked"
 			        }
 			      },
@@ -4007,7 +4007,7 @@ cultureInfo en-US
 			    "meausre.movements_MTD": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements MTD"
 			        }
 			      },
@@ -4029,7 +4029,7 @@ cultureInfo en-US
 			    "meausre.movements_previous_month": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Previous Month"
 			        }
 			      },
@@ -4055,7 +4055,7 @@ cultureInfo en-US
 			    "meausre.MoM_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "MoM %"
 			        }
 			      },
@@ -4091,7 +4091,7 @@ cultureInfo en-US
 			    "meausre.movements_previous_year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Previous Year"
 			        }
 			      },
@@ -4117,7 +4117,7 @@ cultureInfo en-US
 			    "meausre.YoY_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "YoY %"
 			        }
 			      },
@@ -4153,7 +4153,7 @@ cultureInfo en-US
 			    "meausre.movements_previous_week": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Movements Previous Week"
 			        }
 			      },
@@ -4169,7 +4169,7 @@ cultureInfo en-US
 			    "meausre.WoW_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "WoW %"
 			        }
 			      },
@@ -4205,7 +4205,7 @@ cultureInfo en-US
 			    "meausre.rolling_7day_avg": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Rolling 7-Day Avg"
 			        }
 			      },
@@ -4247,7 +4247,7 @@ cultureInfo en-US
 			    "meausre.day_over_day_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Day over Day %"
 			        }
 			      },
@@ -4283,7 +4283,7 @@ cultureInfo en-US
 			    "meausre.BTS_passengers_latest_year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "BTS Passengers Latest Year"
 			        }
 			      },
@@ -4341,7 +4341,7 @@ cultureInfo en-US
 			    "meausre.VIE_latest_passengers": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "VIE Latest Passengers"
 			        }
 			      },
@@ -4479,7 +4479,7 @@ cultureInfo en-US
 			    "meausre.VIE_passengers_latest_year": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "VIE Passengers Latest Year"
 			        }
 			      },
@@ -4577,7 +4577,7 @@ cultureInfo en-US
 			    "meausre.rozdiel_v_trende": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Rozdiel v trende"
 			        }
 			      },
@@ -4586,6 +4586,16 @@ cultureInfo en-US
 			        {
 			          "rozdiel v trende": {
 			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "Growth gap": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -4603,7 +4613,7 @@ cultureInfo en-US
 			    "meausre.BTS_latest_passengers": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "BTS Latest Passengers"
 			        }
 			      },
@@ -4741,7 +4751,7 @@ cultureInfo en-US
 			    "meausre.VIE_latest_YoY": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "VIE Latest YoY"
 			        }
 			      },
@@ -4750,6 +4760,16 @@ cultureInfo en-US
 			        {
 			          "VIE latest YoY": {
 			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "vs same month last year": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -4767,7 +4787,7 @@ cultureInfo en-US
 			    "meausre.BTS_latest_YoY": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "BTS Latest YoY"
 			        }
 			      },
@@ -4776,6 +4796,16 @@ cultureInfo en-US
 			        {
 			          "BTS latest YoY": {
 			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "vs same month last year": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        },
 			        {
@@ -4793,7 +4823,7 @@ cultureInfo en-US
 			    "meausre.YoY_change_PAX_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "YoY Change PAX %"
 			        }
 			      },
@@ -4829,7 +4859,7 @@ cultureInfo en-US
 			    "meausre.yoy_change_color": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "yoy_change color"
 			        }
 			      },
@@ -5386,7 +5416,7 @@ cultureInfo en-US
 			    "meausre.total_movements_BTS": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Total Movements BTS"
 			        }
 			      },
@@ -5434,7 +5464,7 @@ cultureInfo en-US
 			    "meausre.total_movements_VIE": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "Meausre",
+			          "ConceptualEntity": "_Measures",
 			          "ConceptualProperty": "Total Movements VIE"
 			        }
 			      },
@@ -5555,6 +5585,321 @@ cultureInfo en-US
 			              "Agent": "Thesaurus"
 			            },
 			            "Weight": 0.5
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.refresh_label": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "Refresh Label"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Refresh Label": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_yoy_up": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE YoY Up"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Growth": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_yoy_down": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE YoY Down"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Decline": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.headline": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "Headline"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Headline": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_latest_month": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS Latest Month"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Latest month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_prev_passengers": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS Prev Passengers"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Previous release": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_mom": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS MoM"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Change vs previous release": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_prev_month": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS Prev Month"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Previous month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_latest_month": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE Latest Month"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Latest month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_prev_passengers": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE Prev Passengers"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Previous release": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_mom": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE MoM"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Change vs previous release": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.vie_prev_month": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "VIE Prev Month"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Previous month": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_yoy_up": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS YoY Up"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Growth": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.bts_yoy_down": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "BTS YoY Down"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Decline": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "meausre.size_ratio": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "Size Ratio"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Size of Vienna vs Bratislava": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
 			          }
 			        }
 			      ]
@@ -6190,7 +6535,7 @@ cultureInfo en-US
 			    },
 			    "meausre_has_day_over_day_": {
 			      "Binding": {
-			        "ConceptualEntity": "Meausre"
+			        "ConceptualEntity": "_Measures"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -6223,7 +6568,7 @@ cultureInfo en-US
 			    },
 			    "meausre_has_rolling_7day_avg": {
 			      "Binding": {
-			        "ConceptualEntity": "Meausre"
+			        "ConceptualEntity": "_Measures"
 			      },
 			      "State": "Generated",
 			      "Roles": {
@@ -6520,7 +6865,7 @@ cultureInfo en-US
 			    },
 			    "meausre_has_days_tracked": {
 			      "Binding": {
-			        "ConceptualEntity": "Meausre"
+			        "ConceptualEntity": "_Measures"
 			      },
 			      "State": "Generated",
 			      "Roles": {

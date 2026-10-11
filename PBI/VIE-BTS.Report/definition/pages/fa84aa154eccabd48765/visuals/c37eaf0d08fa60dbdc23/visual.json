@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "c37eaf0d08fa60dbdc23",
   "position": {
     "x": 78.871566443949519,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Passengers Latest Year"
                 }
               },
-              "queryRef": "Meausre.BTS Passengers Latest Year",
+              "queryRef": "_Measures.BTS Passengers Latest Year",
               "nativeQueryRef": "BTS Passengers Latest Year"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "BTS Passengers Latest Year"

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "301dda371a4678646dd9",
   "position": {
     "x": 240,
@@ -39,13 +39,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE YoY Up"
                 }
               },
-              "queryRef": "Meausre.VIE YoY Up",
+              "queryRef": "_Measures.VIE YoY Up",
               "nativeQueryRef": "Growth",
               "displayName": "Growth"
             },
@@ -54,13 +54,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "VIE YoY Down"
                 }
               },
-              "queryRef": "Meausre.VIE YoY Down",
+              "queryRef": "_Measures.VIE YoY Down",
               "nativeQueryRef": "Decline",
               "displayName": "Decline"
             }
@@ -306,15 +306,7 @@
       ],
       "layout": [
         {
-          "properties": {
-            "clusteredGapSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "40D"
-                }
-              }
-            }
-          }
+          "properties": {}
         }
       ],
       "valueAxis": [
@@ -442,7 +434,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE YoY Up"
+            "metadata": "_Measures.VIE YoY Up"
           }
         },
         {
@@ -460,24 +452,11 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.VIE YoY Down"
+            "metadata": "_Measures.VIE YoY Down"
           }
         }
       ],
       "legend": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "trend": [
         {
           "properties": {
             "show": {
@@ -853,7 +832,7 @@
           "Measure": {
             "Expression": {
               "SourceRef": {
-                "Entity": "Meausre"
+                "Entity": "_Measures"
               }
             },
             "Property": "YoY Change PAX %"

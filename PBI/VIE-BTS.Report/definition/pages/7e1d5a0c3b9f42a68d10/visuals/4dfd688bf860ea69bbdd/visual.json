@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "4dfd688bf860ea69bbdd",
   "position": {
     "x": 844,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Latest Passengers"
                 }
               },
-              "queryRef": "Meausre.BTS Latest Passengers",
+              "queryRef": "_Measures.BTS Latest Passengers",
               "nativeQueryRef": "Passengers",
               "displayName": "Passengers"
             },
@@ -35,13 +35,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Latest YoY"
                 }
               },
-              "queryRef": "Meausre.BTS Latest YoY",
+              "queryRef": "_Measures.BTS Latest YoY",
               "nativeQueryRef": "vs same month last year",
               "displayName": "vs same month last year"
             },
@@ -50,13 +50,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Latest Month"
                 }
               },
-              "queryRef": "Meausre.BTS Latest Month",
+              "queryRef": "_Measures.BTS Latest Month",
               "nativeQueryRef": "Latest month",
               "displayName": "Latest month"
             },
@@ -65,13 +65,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Prev Passengers"
                 }
               },
-              "queryRef": "Meausre.BTS Prev Passengers",
+              "queryRef": "_Measures.BTS Prev Passengers",
               "nativeQueryRef": "Previous release",
               "displayName": "Previous release"
             },
@@ -80,13 +80,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS MoM"
                 }
               },
-              "queryRef": "Meausre.BTS MoM",
+              "queryRef": "_Measures.BTS MoM",
               "nativeQueryRef": "Change vs previous release",
               "displayName": "Change vs previous release"
             },
@@ -95,13 +95,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "BTS Prev Month"
                 }
               },
-              "queryRef": "Meausre.BTS Prev Month",
+              "queryRef": "_Measures.BTS Prev Month",
               "nativeQueryRef": "Previous month",
               "displayName": "Previous month"
             }
@@ -244,7 +244,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Passengers"
+            "metadata": "_Measures.BTS Latest Passengers"
           }
         },
         {
@@ -277,7 +277,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Meausre"
+                          "Entity": "_Measures"
                         }
                       },
                       "Property": "BTS YoY Color"
@@ -288,7 +288,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest YoY"
+            "metadata": "_Measures.BTS Latest YoY"
           }
         },
         {
@@ -327,7 +327,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Month"
+            "metadata": "_Measures.BTS Latest Month"
           }
         },
         {
@@ -380,7 +380,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Prev Passengers"
+            "metadata": "_Measures.BTS Prev Passengers"
           }
         },
         {
@@ -413,7 +413,7 @@
                     "Measure": {
                       "Expression": {
                         "SourceRef": {
-                          "Entity": "Meausre"
+                          "Entity": "_Measures"
                         }
                       },
                       "Property": "BTS MoM Color"
@@ -424,7 +424,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS MoM"
+            "metadata": "_Measures.BTS MoM"
           }
         },
         {
@@ -463,7 +463,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Prev Month"
+            "metadata": "_Measures.BTS Prev Month"
           }
         }
       ],
@@ -511,7 +511,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Passengers"
+            "metadata": "_Measures.BTS Latest Passengers"
           }
         },
         {
@@ -557,7 +557,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest YoY"
+            "metadata": "_Measures.BTS Latest YoY"
           }
         },
         {
@@ -603,7 +603,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Latest Month"
+            "metadata": "_Measures.BTS Latest Month"
           }
         },
         {
@@ -649,7 +649,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Prev Passengers"
+            "metadata": "_Measures.BTS Prev Passengers"
           }
         },
         {
@@ -695,7 +695,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS MoM"
+            "metadata": "_Measures.BTS MoM"
           }
         },
         {
@@ -741,7 +741,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.BTS Prev Month"
+            "metadata": "_Measures.BTS Prev Month"
           }
         }
       ],

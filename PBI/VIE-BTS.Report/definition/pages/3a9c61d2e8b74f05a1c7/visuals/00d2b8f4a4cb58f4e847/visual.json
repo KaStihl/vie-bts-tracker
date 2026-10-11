@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "00d2b8f4a4cb58f4e847",
   "position": {
     "x": 1500,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Refresh Label"
                 }
               },
-              "queryRef": "Meausre.Refresh Label",
+              "queryRef": "_Measures.Refresh Label",
               "nativeQueryRef": "Refresh Label",
               "displayName": "Refresh Label"
             }

@@ -1,0 +1,50 @@
+expression SupabaseUrl = "https://xgvjeaymmmbffjltsgvi.supabase.co" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 8605f2ea-cffe-4a1e-a6a6-dd2cda4cbf1d
+
+	annotation PBI_ResultType = Text
+
+expression SupabaseAnonKey = "PASTE-SUPABASE-ANON-KEY-HERE" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 361d411e-899a-4024-b09a-63ac5407c163
+
+	annotation PBI_ResultType = Text
+
+expression fnSupabase =
+		(table as text, order as text, filters as nullable record) as table =>
+		let
+		    PageSize = 1000,   // raise to 10000+ after raising "Max rows" in Supabase -> Settings -> API
+
+		    BaseQuery = [select = "*", order = order, limit = Text.From(PageSize)],
+		    Fetch = (offset as number) as list =>
+		        Json.Document(
+		            Web.Contents(
+		                SupabaseUrl,
+		                [
+		                    RelativePath = "rest/v1/" & table,
+		                    Query = Record.Combine({BaseQuery, if filters = null then [] else filters, [offset = Text.From(offset)]}),
+		                    Headers = [
+		                        apikey        = SupabaseAnonKey,
+		                        Authorization = "Bearer " & SupabaseAnonKey,
+		                        Accept        = "application/json"
+		                    ]
+		                ]
+		            )
+		        ),
+
+		    Pages = List.Generate(
+		        () => [off = 0, rows = Fetch(0)],
+		        each List.Count([rows]) > 0,
+		        each [
+		            off  = [off] + PageSize,
+		            rows = if List.Count([rows]) < PageSize then {} else Fetch([off] + PageSize)
+		        ],
+		        each [rows]
+		    ),
+
+		    All = List.Combine(Pages),
+		    Result = if List.Count(All) = 0 then #table({}, {}) else Table.FromRecords(All)
+		in
+		    Result
+	lineageTag: b2a2a2d1-d8d4-44fe-897c-b04b25dd119a
+
+	annotation PBI_ResultType = Function
+

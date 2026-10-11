@@ -29,6 +29,14 @@ create policy "public read annual_traffic"    on public.annual_traffic    for se
 create policy "public read carrier_movements" on public.carrier_movements for select to anon using (true);
 create policy "public read airports"          on public.airports          for select to anon using (true);
 
+-- RLS policies alone are not enough: the anon role also needs the table privilege itself,
+-- otherwise the REST API answers 42501 "permission denied for table ...".
+grant usage on schema public to anon;
+grant select on
+  public.monthly_traffic, public.annual_traffic,
+  public.carrier_movements, public.airports
+to anon;
+
 -- Belt and braces: make sure anon/authenticated can never write these tables.
 revoke insert, update, delete, truncate on
   public.monthly_traffic, public.annual_traffic,

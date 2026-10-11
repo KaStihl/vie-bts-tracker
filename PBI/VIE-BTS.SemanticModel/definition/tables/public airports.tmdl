@@ -84,10 +84,16 @@ table 'public airports'
 		mode: import
 		source =
 				let
-				  Source = PostgreSQL.Database("aws-0-eu-central-1.pooler.supabase.com", "postgres"),
-				  #"Navigation 1" = Source{[Schema = "public", Item = "airports"]}[Data]
+				    Source = fnSupabase("airports", "icao_code", [iata_code = "not.is.null"]),
+				    Typed = Table.TransformColumnTypes(
+				        Source,
+				        {{"icao_code", type text}, {"iata_code", type text}, {"name", type text}, {"city", type text},
+				         {"country", type text}, {"country_code", type text}, {"airport_type", type text},
+				         {"latitude", type number}, {"longitude", type number}},
+				        "en-US"
+				    )
 				in
-				  #"Navigation 1"
+				    Typed
 
 	annotation PBI_NavigationStepName = Navigation
 

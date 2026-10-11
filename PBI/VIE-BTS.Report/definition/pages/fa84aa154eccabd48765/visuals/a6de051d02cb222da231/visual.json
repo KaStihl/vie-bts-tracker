@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "a6de051d02cb222da231",
   "position": {
     "x": 991.4228456913828,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Rolling 7-Day Avg"
                 }
               },
-              "queryRef": "Meausre.Rolling 7-Day Avg",
+              "queryRef": "_Measures.Rolling 7-Day Avg",
               "nativeQueryRef": "Rolling 7-Day Avg"
             }
           ]
@@ -39,7 +39,7 @@
               "Measure": {
                 "Expression": {
                   "SourceRef": {
-                    "Entity": "Meausre"
+                    "Entity": "_Measures"
                   }
                 },
                 "Property": "Rolling 7-Day Avg"

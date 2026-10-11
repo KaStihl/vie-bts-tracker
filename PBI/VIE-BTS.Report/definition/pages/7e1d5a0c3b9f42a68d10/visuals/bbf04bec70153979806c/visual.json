@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "bbf04bec70153979806c",
   "position": {
     "x": 1448,
@@ -20,13 +20,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Rozdiel v trende"
                 }
               },
-              "queryRef": "Meausre.Rozdiel v trende",
+              "queryRef": "_Measures.Rozdiel v trende",
               "nativeQueryRef": "Growth gap",
               "displayName": "Growth gap"
             },
@@ -35,13 +35,13 @@
                 "Measure": {
                   "Expression": {
                     "SourceRef": {
-                      "Entity": "Meausre"
+                      "Entity": "_Measures"
                     }
                   },
                   "Property": "Size Ratio"
                 }
               },
-              "queryRef": "Meausre.Size Ratio",
+              "queryRef": "_Measures.Size Ratio",
               "nativeQueryRef": "Size of Vienna vs Bratislava",
               "displayName": "Size of Vienna vs Bratislava"
             }
@@ -170,7 +170,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         },
         {
@@ -209,7 +209,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Size Ratio"
+            "metadata": "_Measures.Size Ratio"
           }
         }
       ],
@@ -257,7 +257,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Rozdiel v trende"
+            "metadata": "_Measures.Rozdiel v trende"
           }
         },
         {
@@ -303,7 +303,7 @@
             }
           },
           "selector": {
-            "metadata": "Meausre.Size Ratio"
+            "metadata": "_Measures.Size Ratio"
           }
         }
       ],
