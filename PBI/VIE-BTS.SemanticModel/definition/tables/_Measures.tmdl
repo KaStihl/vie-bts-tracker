@@ -268,6 +268,96 @@ table _Measures
 		displayFolder: monthly_traffic
 		lineageTag: a20cb7e7-3b50-46cd-9708-56254ab5f23b
 
+	/// Slovakia: airfare price index, change vs the same month a year earlier (Eurostat HICP CP0733).
+	measure 'Fare SK' =
+			CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), KEEPFILTERS('public eurostat_airfares'[geo] = "SK")) / 100
+		formatString: 0%
+		displayFolder: report
+		lineageTag: 104ea509-454c-4376-898a-a3148ae831d7
+
+	/// Slovakia: airfare change vs a year earlier in the latest month.
+	measure 'Fare SK Latest' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "SK")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "SK", 'public eurostat_airfares'[Date] = _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: e6ecfad9-3a44-42df-a476-8ec528d0c24f
+
+	/// Slovakia: average of the last three monthly airfare changes (the single months are noisy).
+	measure 'Fare SK 3M' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "SK")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "SK", 'public eurostat_airfares'[Date] > EDATE(_d, -3), 'public eurostat_airfares'[Date] <= _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: 26d4638c-78cc-45a0-856c-201091f20088
+
+	/// Slovakia: latest month with an airfare figure.
+	measure 'Fare SK Month' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "SK")
+			RETURN FORMAT(_d, "mmm yyyy")
+		displayFolder: report
+		lineageTag: ee6584d2-4b76-4655-829e-5b84e92c9eb4
+
+	/// Austria: airfare price index, change vs the same month a year earlier (Eurostat HICP CP0733).
+	measure 'Fare AT' =
+			CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), KEEPFILTERS('public eurostat_airfares'[geo] = "AT")) / 100
+		formatString: 0%
+		displayFolder: report
+		lineageTag: b7ffa3cd-6bc1-4bd1-9d23-f075c43b31fc
+
+	/// Austria: airfare change vs a year earlier in the latest month.
+	measure 'Fare AT Latest' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "AT")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "AT", 'public eurostat_airfares'[Date] = _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: c2f8f8da-1b59-406f-a206-6c7e2ccc5a2b
+
+	/// Austria: average of the last three monthly airfare changes (the single months are noisy).
+	measure 'Fare AT 3M' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "AT")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "AT", 'public eurostat_airfares'[Date] > EDATE(_d, -3), 'public eurostat_airfares'[Date] <= _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: fa13391d-7abd-4934-8f27-f560ebfc9491
+
+	/// Austria: latest month with an airfare figure.
+	measure 'Fare AT Month' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "AT")
+			RETURN FORMAT(_d, "mmm yyyy")
+		displayFolder: report
+		lineageTag: e33e0853-c62a-4ec7-849a-70bd7c0443cf
+
+	/// EU average: airfare price index, change vs the same month a year earlier (Eurostat HICP CP0733).
+	measure 'Fare EU' =
+			CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), KEEPFILTERS('public eurostat_airfares'[geo] = "EU27_2020")) / 100
+		formatString: 0%
+		displayFolder: report
+		lineageTag: c23a4b53-9b1c-480a-b3d2-411e2a793813
+
+	/// EU average: airfare change vs a year earlier in the latest month.
+	measure 'Fare EU Latest' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "EU27_2020")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "EU27_2020", 'public eurostat_airfares'[Date] = _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: 12757e66-c807-4e01-98bb-6e3004770290
+
+	/// EU average: average of the last three monthly airfare changes (the single months are noisy).
+	measure 'Fare EU 3M' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "EU27_2020")
+			RETURN CALCULATE(AVERAGE('public eurostat_airfares'[annual_rate_pct]), 'public eurostat_airfares'[geo] = "EU27_2020", 'public eurostat_airfares'[Date] > EDATE(_d, -3), 'public eurostat_airfares'[Date] <= _d) / 100
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: a1acf8fd-23bf-4ad0-b942-59a6db19e259
+
+	/// EU average: latest month with an airfare figure.
+	measure 'Fare EU Month' =
+			VAR _d = CALCULATE(MAX('public eurostat_airfares'[Date]), 'public eurostat_airfares'[geo] = "EU27_2020")
+			RETURN FORMAT(_d, "mmm yyyy")
+		displayFolder: report
+		lineageTag: e677cf5e-c2d0-4caa-aac0-764eb23747ff
+
 	/// Distinct date+hour slots (05:00-21:59, assumed UTC) that contain at least one captured departure.
 	measure 'Departure Hours With Data' =
 			COUNTROWS(

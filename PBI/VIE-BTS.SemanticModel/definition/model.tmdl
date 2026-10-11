@@ -17,6 +17,7 @@ ref table 'public airports'
 ref table 'public annual_traffic'
 ref table 'public carrier_movements'
 ref table 'public monthly_traffic'
+ref table 'public eurostat_airfares'
 ref table _Measures
 ref table DateTable
 ref table Query

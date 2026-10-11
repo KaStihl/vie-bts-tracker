@@ -1,0 +1,77 @@
+table 'public eurostat_airfares'
+	lineageTag: 8d2263ff-4f22-4e91-99ba-ee4c742b54f8
+
+	column geo
+		dataType: string
+		lineageTag: b6dc6072-0274-41de-bcfc-49565750544a
+		summarizeBy: none
+		sourceColumn: geo
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1c760cfd-febf-4452-96e9-590d444990a7
+		summarizeBy: none
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 2a6d2b2a-135c-4a28-bfef-899be7f5e35d
+		summarizeBy: none
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column annual_rate_pct
+		dataType: double
+		formatString: 0.0
+		lineageTag: e328f294-7105-415f-9f41-24110e5c8db2
+		summarizeBy: none
+		sourceColumn: annual_rate_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column index_2025
+		dataType: double
+		formatString: 0.0
+		lineageTag: f6f0c95a-7c43-4d94-824a-a21efcfccbc7
+		summarizeBy: none
+		sourceColumn: index_2025
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date = DATE('public eurostat_airfares'[year], 'public eurostat_airfares'[month], 1)
+		formatString: mmm yyyy
+		lineageTag: 89c2586d-d631-40e3-8733-34580dfa5d46
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country = SWITCH('public eurostat_airfares'[geo], "SK", "Slovakia", "AT", "Austria", "CZ", "Czechia", "HU", "Hungary", "BE", "Belgium", "EU27_2020", "EU average", 'public eurostat_airfares'[geo])
+		lineageTag: 78be37b0-3268-463a-b974-6ff9fb308d29
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'public eurostat_airfares' = m
+		mode: import
+		source =
+				let
+				    // the table is created by the weekly scrape; until then the Prices page is simply empty
+				    Source = try fnSupabase("eurostat_airfares", "geo,year,month", null)
+				        otherwise #table({"geo", "year", "month", "annual_rate_pct", "index_2025"}, {}),
+				    Typed = Table.TransformColumnTypes(
+				        Source,
+				        {{"geo", type text}, {"year", Int64.Type}, {"month", Int64.Type}, {"annual_rate_pct", type number}, {"index_2025", type number}},
+				        "en-US"
+				    ),
+				    Columns = Table.SelectColumns(Typed, {"geo", "year", "month", "annual_rate_pct", "index_2025"})
+				in
+				    Columns
+
+	annotation PBI_ResultType = Table

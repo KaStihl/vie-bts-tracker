@@ -53,6 +53,20 @@ Alternatives with the same effect: a Cloudflare Worker with a Cron Trigger doing
 same `fetch()` POST, or Supabase `pg_cron` + `pg_net` calling the same URL. Never put
 the token in the repository.
 
+## Automatic post drafts (LinkedIn + blog)
+
+After every weekly scrape the workflow runs `python -m scraper.draft_post`. It writes a draft (Slovak and English
+LinkedIn text with the newest numbers, a checklist) and opens it as a **GitHub issue labelled `content-draft`**.
+It never posts anything. One issue per new release: the title is `Draft post: <Month Year> (BTS | VIE | BTS + VIE)`,
+so a second issue appears when the other airport publishes the same month, and reruns do not duplicate.
+
+Workflow: open the issue -> replace the `[...]` placeholders and add your own comment -> check each number against
+the linked release -> publish the report -> post on LinkedIn (link in the first comment) -> close the issue.
+The content plan and longer drafts live on branch `content-drafts` (`docs/content-plan/`).
+
+Next step (not built): post the approved text automatically through the LinkedIn API or Buffer. The LinkedIn token
+lasts about 60 days and has to be created by the account owner; keep the approval step.
+
 ## Supabase
 
 * Scrapers connect with `SUPABASE_CONNECTION_STRING` (the `postgres` role, bypasses RLS).

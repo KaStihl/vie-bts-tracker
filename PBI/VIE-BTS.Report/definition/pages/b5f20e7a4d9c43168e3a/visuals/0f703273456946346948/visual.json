@@ -73,7 +73,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Fills months an airport did not publish. Bratislava matches the airport's count; Vienna is 1–3 % higher.",
+                    "value": "Fills months an airport did not publish, plus the airfare price index by country.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",

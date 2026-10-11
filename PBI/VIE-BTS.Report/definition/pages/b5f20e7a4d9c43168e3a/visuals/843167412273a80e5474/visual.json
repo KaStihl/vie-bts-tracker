@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat and tagged as such; a month nobody published is left out, never guessed.",
+                    "value": "Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat (Bratislava matches the airport's count, Vienna is 1–3 % higher) and tagged as such; a month nobody published is left out, never guessed.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "15pt",

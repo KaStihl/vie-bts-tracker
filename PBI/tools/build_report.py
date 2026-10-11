@@ -39,6 +39,8 @@ RESOURCES = PBI / "VIE-BTS.Report" / "StaticResources" / "RegisteredResources"
 MODEL_TABLE = PBI / "VIE-BTS.SemanticModel" / "definition" / "tables" / "_Measures.tmdl"
 OLD_TREND = REPORT / "pages" / "104c7970aaaebc19f569"          # source of the cloned slicers / nav / button / charts
 HOME_ID, TREND_ID, SRC_ID = "3a9c61d2e8b74f05a1c7", "7e1d5a0c3b9f42a68d10", "b5f20e7a4d9c43168e3a"
+PRICES_ID = "c8d3a17f5e2b49d6a0f1"
+FARE_TABLE = "public eurostat_airfares"
 SCHEMA_VISUAL = "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json"
 
 # ---- palette (all validated, see module docstring)
@@ -49,6 +51,9 @@ POS, NEG, ACCENT = "#3DDC97", "#FF7B7B", "#8FE3DC"
 FONT_SEMI = "'''Segoe UI Semibold'', wf_segoe-ui_semibold, helvetica, arial, sans-serif'"
 FONT = "'''Segoe UI'', wf_segoe-ui_normal, helvetica, arial, sans-serif'"
 GLASS = 14   # card transparency in %
+EU_LINE = "#C9D6E3"      # the EU average line: neutral, so the two airports' colours keep their meaning
+# (short code used in measure names, Eurostat geo code, label, colour)
+FARE_GEOS = (("SK", "SK", "Slovakia", BTS), ("AT", "AT", "Austria", VIE), ("EU", "EU27_2020", "EU average", EU_LINE))
 
 
 # ------------------------------------------------------------------ PBIR helpers
@@ -302,6 +307,39 @@ def total_chart(x, y, w, h, z):
     return place("chart-total", d, x, y, w, h, z, cont)
 
 
+def fare_chart(x, y, w, h, z):
+    """Airfare index, change vs the same month a year earlier: one line per country (one measure per line, so each
+    line has its own fixed colour and no Series field / filter is needed)."""
+    d = clone("9e083f8b5bcc3aabd310")
+    o = d["visual"]["objects"]
+    for k in ("categoryAxis", "valueAxis"):
+        axis(o[k][0]["properties"])
+    o["categoryAxis"][0]["properties"]["gridlineShow"] = B(False)
+    o["valueAxis"][0]["properties"].update({"gridlineShow": B(True), "gridlineColor": color(GRID), "gridlineStyle": S("dashed"),
+                                           "labelPrecision": LONG(0), "showAxisTitle": B(False), "logAxisScale": B(False)})
+    o["valueAxis"][0]["properties"].pop("labelDisplayUnits", None)
+    sel = lambda code: {"metadata": f"_Measures.Fare {code}"}
+    o["lineStyles"] = [{"properties": {"areaShow": B(False), "lineChartType": S("linear"), "showMarker": B(True), "markerSize": D(7),
+                                      "strokeWidth": D(2), "strokeLineJoin": S("round")}}] + [
+        {"properties": {"strokeWidth": D(3 if code == "SK" else 2), "markerColor": color(hex_)}, "selector": sel(code)}
+        for code, _geo, _label, hex_ in FARE_GEOS]
+    o["dataPoint"] = [{"properties": {"fill": color(hex_)}, "selector": sel(code)} for code, _geo, _label, hex_ in FARE_GEOS]
+    o["legend"] = legend()
+    o.pop("seriesLabels", None)
+    ent = {"SourceRef": {"Entity": FARE_TABLE}}
+    date_ref = {"Column": {"Expression": ent, "Property": "Date"}}
+    qs = d["visual"]["query"]
+    qs["queryState"] = {
+        "Category": {"projections": [{"field": date_ref, "queryRef": f"{FARE_TABLE}.Date", "nativeQueryRef": "Date", "active": True}]},
+        "Y": {"projections": [{"field": measure_ref(f"Fare {code}"), "queryRef": f"_Measures.Fare {code}",
+                               "nativeQueryRef": label, "displayName": label} for code, _geo, label, _hex in FARE_GEOS]}}
+    qs["sortDefinition"] = {"sort": [{"field": date_ref, "direction": "Ascending"}], "isDefaultSort": True}
+    cont = container("Airfares: change vs the same month a year earlier",
+                     "Eurostat price index for air passenger transport  ·  % change  ·  one line per country", pad=16, title_size=16,
+                     alt="Line chart: yearly change of airfares in Slovakia, Austria and the EU average by month since January 2024.")
+    return place("chart-fares", d, x, y, w, h, z, cont)
+
+
 def slicer(src_id, label, title, x, y, w, h, z):
     d = clone(src_id)
     o = d["visual"]["objects"]
@@ -368,10 +406,10 @@ def rail(prefix, with_filters):
         add(slicer("e40dc81a94e2d0a35d0b", f"{prefix}-sl3", "Month", 40, 332, 168, 68, 4400))
         add(clear_button(f"{prefix}-clr", 40, 416, 168, 40, 4500))
         add(textbox(f"{prefix}-pg", 40, 482, 168, 36, 4600, [("PAGES", 11, MUTED, True)]))
-        add(nav(f"{prefix}-nav", 40, 518, 168, 130, 4700))
+        add(nav(f"{prefix}-nav", 40, 518, 168, 176, 4700))
     else:
         add(textbox(f"{prefix}-pg", 40, 134, 168, 36, 4600, [("PAGES", 11, MUTED, True)]))
-        add(nav(f"{prefix}-nav", 40, 172, 168, 130, 4700))
+        add(nav(f"{prefix}-nav", 40, 172, 168, 176, 4700))
     return out
 
 
@@ -476,6 +514,37 @@ def home():
     return v
 
 
+def prices():
+    v = {}
+
+    def add(pair): v[pair[0]] = pair[1]
+
+    v.update(header("p", subtitle="Airfares: is Slovakia getting cheaper?"))
+    v.update(rail("p", False))
+    for i, (code, _geo, label, hex_) in enumerate(FARE_GEOS):
+        x = (240, 798, 1356)[i]
+        add(accent(f"p-bar-{code}", x, 124, 540, 5150 + 10 * i, hex_ if code != "EU" else MUTED))
+        add(kpi_card(f"p-kpi-{code}", x, 124, 540, 190, 5100 + 10 * i,
+                     [{"prop": f"Fare {code} Latest", "name": "Fares vs a year earlier", "kind": "pct", "size": 32, "hex": WHITE},
+                      {"prop": f"Fare {code} Month", "name": "Latest month", "kind": "text", "size": 20, "hex": SOFT},
+                      {"prop": f"Fare {code} 3M", "name": "3-month average", "kind": "pct", "size": 22, "hex": SOFT}],
+                     label.upper(), cols=3, rows=1,
+                     alt=f"{label}: change of airfares versus the same month a year earlier, the latest month and the three-month average."))
+    add(fare_chart(240, 330, 1100, 652, 6000))
+    add(glass("p-note", 1352, 330, 544, 652, 6100))
+    add(rich_textbox("p-note-t", 1374, 344, 500, 626, 6200, [
+        P("HOW TO READ THIS", 11, MUTED, True), GAP,
+        P("Each line shows how much more or less air tickets cost than in the same month a year earlier (Eurostat consumer price index, passenger transport by air).", 14, SOFT, bullet=True),
+        GAP,
+        P("It covers fares in a country's consumer basket, not only flights from one airport.", 14, SOFT, bullet=True),
+        GAP,
+        P("It is volatile: Slovakia moved between −23 % and +40 % during 2025. Read runs of several months, not a single one. That is why the cards also show a three-month average.", 14, SOFT, bullet=True),
+        GAP,
+        P("A fall does not prove its cause. It fits the shift of low-cost capacity from Vienna to Bratislava, but this index alone cannot show that.", 14, SOFT, bullet=True)]))
+    v.update(footer("p"))
+    return v
+
+
 def source():
     v = {}
 
@@ -494,7 +563,7 @@ def source():
          "opensky-network.org", "https://opensky-network.org/"),
         ("OPEN SOURCE", "Code and methodology", "The whole pipeline is public: scrapers, schedules, database schema and this report.",
          "github.com/KaStihl/vie-bts-tracker", "https://github.com/KaStihl/vie-bts-tracker"),
-        ("MONTHLY  ·  GAP FILLER", "Eurostat", "Fills months an airport did not publish. Bratislava matches the airport's count; Vienna is 1–3 % higher.",
+        ("MONTHLY  ·  GAP FILLER", "Eurostat", "Fills months an airport did not publish, plus the airfare price index by country.",
          "ec.europa.eu › eurostat › avia_paoa", "https://ec.europa.eu/eurostat/databrowser/view/avia_paoa/"),
     ]
     for i, (kind, name, desc, link, url) in enumerate(cards):
@@ -507,7 +576,7 @@ def source():
     add(glass("s-notes", 240, 612, 1656, 310, 5200))
     add(rich_textbox("s-notes-t", 262, 626, 1612, 284, 5300, [
         P("DATA NOTES", 11, MUTED, True), GAP,
-        P("Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat and tagged as such; a month nobody published is left out, never guessed.", 15, SOFT, bullet=True),
+        P("Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat (Bratislava matches the airport's count, Vienna is 1–3 % higher) and tagged as such; a month nobody published is left out, never guessed.", 15, SOFT, bullet=True),
         GAP,
         P("Year-over-year change uses the percentage the airport published; where it gave none (and for Eurostat months) it is computed from the same month a year earlier in the same source.", 15, SOFT, bullet=True),
         GAP,
@@ -550,6 +619,19 @@ for _code, _name, _col in (("VIE", "Vienna", VIE), ("BTS", "Bratislava", BTS)):
     MEASURES[f"{_code} MoM"] = ([f"DIVIDE([{_code} Latest Passengers] - [{_code} Prev Passengers], [{_code} Prev Passengers])"],
                                 "+0.0%;-0.0%;0.0%", f"{_name}: change versus the previous release.")
     MEASURES[f"{_code} MoM Color"] = ([f'IF([{_code} MoM] < 0, "{NEG}", "{POS}")'], None, "Red when down, green when up (text colour, AA contrast on the card).")
+
+
+_FT = f"'{FARE_TABLE}'"
+for _c, _geo, _label, _hex in FARE_GEOS:
+    _g = f"{_FT}[geo] = \"{_geo}\""
+    _latest = f"VAR _d = CALCULATE(MAX({_FT}[Date]), {_g})"
+    MEASURES[f"Fare {_c}"] = ([f"CALCULATE(AVERAGE({_FT}[annual_rate_pct]), KEEPFILTERS({_g})) / 100"], "0%",
+                              f"{_label}: airfare price index, change vs the same month a year earlier (Eurostat HICP CP0733).")
+    MEASURES[f"Fare {_c} Latest"] = ([_latest, f"RETURN CALCULATE(AVERAGE({_FT}[annual_rate_pct]), {_g}, {_FT}[Date] = _d) / 100"],
+                                     "+0.0%;-0.0%;0.0%", f"{_label}: airfare change vs a year earlier in the latest month.")
+    MEASURES[f"Fare {_c} 3M"] = ([_latest, f"RETURN CALCULATE(AVERAGE({_FT}[annual_rate_pct]), {_g}, {_FT}[Date] > EDATE(_d, -3), {_FT}[Date] <= _d) / 100"],
+                                 "+0.0%;-0.0%;0.0%", f"{_label}: average of the last three monthly airfare changes (the single months are noisy).")
+    MEASURES[f"Fare {_c} Month"] = ([_latest, 'RETURN FORMAT(_d, "mmm yyyy")'], None, f"{_label}: latest month with an airfare figure.")
 
 
 def write_measures():
@@ -640,15 +722,16 @@ def main() -> int:
     dump(tmp, base_tpl)
     write_page(HOME_ID, "Home", names["home"], home(), tmp)
     write_page(TREND_ID, "Trend", names["main"], trend(), tmp)
+    write_page(PRICES_ID, "Prices", names["main"], prices(), tmp)
     write_page(SRC_ID, "Source", names["main"], source(), tmp)
     tmp.unlink()
 
     pages = load(REPORT / "pages" / "pages.json")
-    first = [HOME_ID, TREND_ID, SRC_ID]
+    first = [HOME_ID, TREND_ID, PRICES_ID, SRC_ID]
     pages["pageOrder"] = first + [p for p in pages["pageOrder"] if p not in first]
     pages["activePageName"] = sys.argv[1] if len(sys.argv) > 1 else HOME_ID
     dump(REPORT / "pages" / "pages.json", pages)
-    print("pages written:", {"home": len(home()), "trend": len(trend()), "source": len(source())})
+    print("pages written:", {"home": len(home()), "trend": len(trend()), "prices": len(prices()), "source": len(source())})
     return 0
 
 

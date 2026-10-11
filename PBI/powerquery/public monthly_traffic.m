@@ -53,7 +53,7 @@ let
         Table.NestedJoin(EuroRenamed, {"airport_code", "year", "month_number"}, Official, {"airport_code", "year", "month_number"}, "o", JoinKind.LeftAnti),
         {"prev_passengers"}
     ),
-    EuroScraped = Table.TransformColumns(EuroGaps, {{"scraped_at", ToUtc, type datetime}}),
+    EuroScraped = Table.RemoveColumns(Table.TransformColumns(EuroGaps, {{"scraped_at", ToUtc, type datetime}}), {"passengers_carried"}, MissingField.Ignore),
     EuroId = Table.AddColumn(EuroScraped, "id", each null, Int64.Type),
     EuroGroupPax = Table.AddColumn(EuroId, "group_passengers", each null, Int64.Type),
     EuroGroupYoy = Table.AddColumn(EuroGroupPax, "group_yoy_pct", each null, type number),
