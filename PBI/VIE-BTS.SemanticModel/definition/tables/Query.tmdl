@@ -40,13 +40,12 @@ table Query
 		mode: import
 		source =
 				let
-				  Source = DateTime.LocalNow(),
-				    #"Converted to Table" = #table(1, {{Source}}),
-				    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table",{{"Column1", type datetime}}),
-				    #"Inserted Date" = Table.AddColumn(#"Changed Type", "Date", each DateTime.Date([Column1]), type date),
-				    #"Inserted Time" = Table.AddColumn(#"Inserted Date", "Time", each DateTime.Time([Column1]), type time)
+				    Now = DateTimeZone.RemoveZone(DateTimeZone.UtcNow()),
+				    Table = #table(type table [Column1 = datetime], {{Now}}),
+				    InsertedDate = Table.AddColumn(Table, "Date", each DateTime.Date([Column1]), type date),
+				    InsertedTime = Table.AddColumn(InsertedDate, "Time", each DateTime.Time([Column1]), type time)
 				in
-				  #"Inserted Time"
+				    InsertedTime
 
 	annotation PBI_NavigationStepName = Navigation
 
