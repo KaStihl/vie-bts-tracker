@@ -207,6 +207,41 @@ def upsert_eurostat_monthly(conn, records: list[dict]) -> None:
     conn.commit()
 
 
+EUROSTAT_AIRFARES_DDL = """
+CREATE TABLE IF NOT EXISTS public.eurostat_airfares (
+    geo               text        NOT NULL,   -- Eurostat geo code: SK, AT, CZ, HU, BE, EU27_2020
+    year              integer     NOT NULL,
+    month             integer     NOT NULL,
+    annual_rate_pct   numeric     NOT NULL,   -- airfare index, change vs the same month a year earlier
+    index_2025        numeric,                -- index, 2025 = 100
+    scraped_at        timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (geo, year, month)
+);
+ALTER TABLE public.eurostat_airfares ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public read eurostat_airfares" ON public.eurostat_airfares;
+CREATE POLICY "public read eurostat_airfares" ON public.eurostat_airfares FOR SELECT TO anon USING (true);
+GRANT SELECT ON public.eurostat_airfares TO anon;
+"""
+
+
+def upsert_eurostat_airfares(conn, records: list[dict]) -> None:
+    with conn.cursor() as cur:
+        cur.execute(EUROSTAT_AIRFARES_DDL)
+        psycopg2.extras.execute_values(
+            cur,
+            """
+            INSERT INTO public.eurostat_airfares (geo, year, month, annual_rate_pct, index_2025)
+            VALUES %s
+            ON CONFLICT (geo, year, month) DO UPDATE SET
+                annual_rate_pct = excluded.annual_rate_pct,
+                index_2025 = excluded.index_2025,
+                scraped_at = NOW()
+            """,
+            [(r["geo"], r["year"], r["month"], r["annual_rate_pct"], r["index_2025"]) for r in records],
+        )
+    conn.commit()
+
+
 def export_csv(conn, out_dir) -> None:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

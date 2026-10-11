@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: read
+  issues: write      # opens the draft-post issue
 
 concurrency:
   group: traffic-scrape
@@ -37,3 +38,23 @@ jobs:
         env:
           SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
         run: python -m scraper.main
+
+      # Prepares (never posts) a LinkedIn/blog draft with the newest numbers as a GitHub issue for review.
+      # One issue per new release: the title names the month and the airports that have published it.
+      - name: Draft LinkedIn post (issue for review)
+        continue-on-error: true
+        env:
+          SUPABASE_CONNECTION_STRING: ${{ secrets.SUPABASE_CONNECTION_STRING }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python -m scraper.draft_post --out draft.md --title-file title.txt
+          if [ -f title.txt ]; then
+            title="$(cat title.txt)"
+            existing="$(gh issue list --state all --limit 200 --json title --jq '.[].title' | grep -Fxc "$title" || true)"
+            if [ "$existing" = "0" ]; then
+              gh label create content-draft --color 0E8A16 --description "Auto-drafted LinkedIn/blog post, needs review" 2>/dev/null || true
+              gh issue create --title "$title" --body-file draft.md --label content-draft
+            else
+              echo "Draft already exists: $title"
+            fi
+          fi

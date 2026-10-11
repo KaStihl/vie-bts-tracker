@@ -14,7 +14,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import vie_scraper, bts_scraper, eurostat_monthly, db
+from . import vie_scraper, bts_scraper, eurostat_monthly, eurostat_airfares, db
 
 
 def run() -> None:
@@ -66,6 +66,18 @@ def run() -> None:
         print(f"Stored {len(euro)} Eurostat monthly records.")
     elif not any("Eurostat" in p for p in problems):
         problems.append("Eurostat returned 0 monthly records (dataset changed?)")
+
+    print("\n=== Eurostat airfares (price index, by country) ===")
+    try:
+        fares = eurostat_airfares.scrape()
+    except Exception as exc:
+        fares = []
+        problems.append(f"Eurostat airfares request failed: {exc}")
+    if fares:
+        db.upsert_eurostat_airfares(conn, fares)
+        print(f"Stored {len(fares)} airfare index records.")
+    elif not any("airfares" in p for p in problems):
+        problems.append("Eurostat airfares returned 0 records (dataset changed?)")
 
     if os.environ.get("EXPORT_CSV") == "1":
         export_dir = Path(__file__).parent / "exports"
