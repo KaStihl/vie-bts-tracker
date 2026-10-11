@@ -138,8 +138,10 @@ so two charts, never one dual axis.
 
 ## Week 4: Cheaper tickets in Slovakia, and Vienna's answer
 
-Researched 11 Oct 2026 from news coverage (links at the end). **Verify every number below against the
-original before posting**; the search gave summaries, and one article could not be opened.
+Researched 11 Oct 2026 from news coverage (links at the end). **Update 11 Oct:** the Slovakia/Belgium fare figures
+were checked against Eurostat (`prc_hicp_minr`, item CP0733) and match: SK -53.0 / -48.2 / -45.1 % (Apr-Jun 2026),
+then -43.6 % (Jul) and -61.2 % (Aug); Austria +22.3 / +15.6 / +6.8 % (Jun-Aug); BE +41.5 / +33.8 / +28.7 % (Apr-Jun).
+The news figures about Vienna (tax, layoffs, forecast) are still unverified: check them at the original source.
 
 * Hook: Slovakia had the steepest airfare drop in the EU in spring 2026: year over year **-53 % in April,
   -48 % in May, -45 % in June**, while Belgium, with its departure tax, saw fares **rise 29 to 42 %**
