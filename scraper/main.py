@@ -55,8 +55,7 @@ def run() -> None:
     else:
         problems.append("BTS press-release scraper returned 0 monthly figures (page layout changed?)")
 
-    print("
-=== Eurostat monthly (fills months the airports did not publish) ===")
+    print("\n=== Eurostat monthly (fills months the airports did not publish) ===")
     try:
         euro = eurostat_monthly.scrape()
     except Exception as exc:  # network / API change: report, but do not lose the other sources
