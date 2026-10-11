@@ -11,11 +11,12 @@ Nothing in this folder is published; it is a draft for approval.
 | 1 | Tue 13 Oct | I rebuilt the report (story + Eurostat gap fill) | `novy-report-vie-bts` | written (branch `article/report-redesign` in the blog repo) |
 | 2 | Tue 20 Oct | Bratislava is now one passenger for every five in Vienna | `bratislava-vs-viedn-velkost` | draft below |
 | 3 | Tue 27 Oct | More flights, not bigger planes | `lety-nie-vacsie-lietadla` | draft below |
-| 4 | Tue 3 Nov | Bratislava turns into a scheduled airport (and a domestic route is back) | `bratislava-pravidelne-linky` | brief |
-| 5 | Tue 10 Nov | Where Vienna and Bratislava fly: hub versus holiday airport | `trasy-viedn-bratislava` | brief |
-| 6 | Tue 17 Nov | Wizz Air left Vienna: what a flight-tracking feed shows | `wizz-air-viedn-bratislava` | brief |
-| 7 | Tue 24 Nov | Why my "hourly" job ran every five hours | `hodinovy-job-kazdych-5-hodin` | brief |
-| 8 | Tue 1 Dec | Where 15.8 million AI tokens went (building this with Claude) | `kam-isli-tokeny` | brief, needs your OK |
+| 4 | Tue 3 Nov | Cheaper tickets in Slovakia, and Vienna's answer (tax, layoffs) | `letenky-slovensko-viedn` | brief + draft below, numbers to verify |
+| 5 | Tue 10 Nov | Bratislava turns into a scheduled airport (and a domestic route is back) | `bratislava-pravidelne-linky` | brief |
+| 6 | Tue 17 Nov | Where Vienna and Bratislava fly: hub versus holiday airport | `trasy-viedn-bratislava` | brief |
+| 7 | Tue 24 Nov | Wizz Air left Vienna: what a flight-tracking feed shows | `wizz-air-viedn-bratislava` | brief |
+| 8 | Tue 1 Dec | Why my "hourly" job ran every five hours | `hodinovy-job-kazdych-5-hodin` | brief |
+| 9 | Tue 8 Dec | Where 15.8 million AI tokens went (building this with Claude) | `kam-isli-tokeny` | brief, needs your OK |
 
 When a new official monthly release appears (BTS/VIE), swap that week's topic for a short "data drop":
 three numbers, one chart, link to the dashboard.
@@ -135,7 +136,64 @@ so two charts, never one dual axis.
 
 ---
 
-## Week 4 (brief): Bratislava turns into a scheduled airport
+## Week 4: Cheaper tickets in Slovakia, and Vienna's answer
+
+Researched 11 Oct 2026 from news coverage (links at the end). **Verify every number below against the
+original before posting**; the search gave summaries, and one article could not be opened.
+
+* Hook: Slovakia had the steepest airfare drop in the EU in spring 2026: year over year **-53 % in April,
+  -48 % in May, -45 % in June**, while Belgium, with its departure tax, saw fares **rise 29 to 42 %**
+  (EUalive, 24 Jul 2026, citing Eurostat). Both numbers are the article's, not mine.
+* Caveat to include: an airfare index is noisy. In Eurostat's 2025 series Slovakia swings between -22.8 %
+  (Apr) and +32.9 % (Jun) and +40.1 % (Nov), so one month proves nothing; the three-month run is the story.
+  To check: Eurostat `prc_hicp_manr`, COICOP `CP0733` (passenger transport by air), geo SK / AT / BE; the
+  version I could query ends in December 2025, so the 2026 months must be confirmed from the current release.
+* Vienna's side (facts to quote with the source): Austrian tax EUR 12 per departing passenger, EUR 30 on flights
+  up to 350 km; airport management wants it abolished and says Bratislava's costs are a third lower; the
+  finance ministry has no plan to cut it; Vienna Airport lowered its 2026 forecast to below 30 million
+  passengers and announced about 200 job cuts; Ryanair pulled 5 aircraft out of Vienna.
+* Our own data to tie it together: July 2026 flights BTS +60 % / VIE -4 %, Bratislava 619,902 passengers
+  (+72.7 %), Vienna 3,163,309 (-4.7 %, Eurostat basis).
+* Open question for the post (say it plainly): is the fare gap permanent? EUalive argues it is temporary
+  because EU rules (ETS, ReFuelEU) raise costs. This is an opinion; present it as one.
+* Possible report visual: airfare index SK vs AT, 2025 to date, once 2026 data is available.
+
+**LinkedIn (SK), draft: fill in the checked numbers**
+
+> Keď lacné letecké spoločnosti odídu z jedného letiska, ceny letenky sa v susednej krajine pohnú.
+>
+> Podľa Eurostatu (cez EUalive) boli letenky na Slovensku v apríli 2026 medziročne o 53 % lacnejšie, v máji o 48 % a v júni o 45 %. Najväčší pokles v EÚ. V Belgicku s odletovou daňou ceny stúpli o 29 až 42 %.
+>
+> Medzitým Viedeň: daň 12 € na odlietajúceho pasažiera, Wizz Air preč, Ryanair stiahol 5 lietadiel, prognóza pod 30 mil. pasažierov a približne 200 prepúšťaní.
+>
+> Moje dáta: júl 2026 má Bratislava 619 902 pasažierov (+72,7 %), Viedeň 3 163 309 (−4,7 %).
+>
+> Jeden mesiac cien o ničom nehovorí, preto sledujem trojmesačný trend. Zdroje a postup v prvom komentári.
+>
+> #PowerBI #DataViz #Aviation
+
+**LinkedIn (EN), draft**
+
+> When low-cost airlines leave one airport, fares move in the neighbouring country.
+>
+> According to Eurostat (via EUalive), airfares in Slovakia were 53 % lower year over year in April 2026, 48 % lower in May and 45 % lower in June. The biggest drop in the EU. In Belgium, with its departure tax, fares rose 29 to 42 %.
+>
+> Meanwhile in Vienna: EUR 12 tax per departing passenger, Wizz Air gone, Ryanair pulled 5 aircraft, forecast below 30 million passengers, about 200 job cuts.
+>
+> My data: July 2026, Bratislava 619,902 passengers (+72.7 %), Vienna 3,163,309 (-4.7 %).
+>
+> One month of prices proves nothing, so I look at the three-month run. Sources and method in the first comment.
+>
+> #PowerBI #DataViz #Aviation
+
+**Sources:** [EUalive, 24 Jul 2026](https://eualive.net/slovakia-records-steepest-drop-in-air-fares-in-the-eu-as-low-cost-carriers-flee-vienna/);
+[ORF, airport board wants the tax gone](https://orf.at/stories/3444629/);
+[aviation.direct, Vienna outlook 2026](https://aviation.direct/en/Vienna-Airport:-record-year-2025-and-outlook-for-a-challenging-business-year-2026);
+[TASR, Wizz Air base opening 14 Nov 2025](https://www.tasr.sk/tasr-clanok/TASR:2025111400000346).
+
+---
+
+## Week 5 (brief): Bratislava turns into a scheduled airport
 
 * Hook: scheduled share of BTS passengers 51 % (Jul 2024) -> 56 % -> **76 %** (Jul 2026); Vienna 98-99 %.
 * Supporting: extra-EU share fell from 46 % to 36 % (more EU low-cost, fewer Turkey/Egypt charters);
@@ -145,7 +203,7 @@ so two charts, never one dual axis.
   Check the route and operator before writing it.
 * Chart: stacked share by traffic type for BTS, one panel per July.
 
-## Week 5 (brief): hub versus holiday airport
+## Week 6 (brief): hub versus holiday airport
 
 * Hook: Vienna's top routes are the big hubs (Frankfurt 1.03 M, London Heathrow 0.80 M, Amsterdam 0.78 M,
   Zurich 0.75 M); Bratislava's are leisure (Antalya 215 k, London Stansted 112 k, London Luton 96 k, Bergamo 90 k).
@@ -153,7 +211,7 @@ so two charts, never one dual axis.
 * Chart: two horizontal bar charts, top 10 each, different scales, same colours as the report.
 * New report page idea: "Routes" with the top 10 per airport.
 
-## Week 6 (brief): Wizz Air left Vienna
+## Week 7 (brief): Wizz Air left Vienna
 
 * Hook: in 8 weeks of OpenSky capture (16 Aug to 11 Oct 2026) there is **1** Wizz Air movement at Vienna
   and **654** at Bratislava (Ryanair: 2,174 at Vienna, 758 at Bratislava; Austrian: 7,919 at Vienna).
@@ -161,7 +219,7 @@ so two charts, never one dual axis.
   shares, not totals.
 * Pair it with the March 2026 timeline event and the Eurostat flights numbers from week 3.
 
-## Week 7 (brief): why my "hourly" job ran every five hours
+## Week 8 (brief): why my "hourly" job ran every five hours
 
 * Hook: I measured GitHub Actions' cron on this repo (19 Aug to 10 Oct 2026): "hourly" ran about every 5 hours,
   so departures from a feed that only remembers the last hour were lost for good.
@@ -169,7 +227,7 @@ so two charts, never one dual axis.
   when coverage of daytime hours drops. Include the before/after coverage once a week of data exists.
 * Audience: data engineers. Good for LinkedIn comments.
 
-## Week 8 (brief, needs your OK): where 15.8 million tokens went
+## Week 9 (brief, needs your OK): where 15.8 million tokens went
 
 * Hook: a month of building this with an AI assistant cost about 15.8 M effective input tokens over 231 steps.
   58 % was re-reading the earlier conversation, 25 % running commands, 11 % instructions.
