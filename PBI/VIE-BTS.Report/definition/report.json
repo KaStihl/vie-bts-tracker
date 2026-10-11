@@ -98,6 +98,16 @@
           "name": "FKConsulting6380241216203667.json",
           "path": "FKConsulting6380241216203667.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "bg_main243482395469910.png",
+          "path": "bg_main243482395469910.png",
+          "type": "Image"
+        },
+        {
+          "name": "bg_home56962674995544.png",
+          "path": "bg_home56962674995544.png",
+          "type": "Image"
         }
       ]
     }

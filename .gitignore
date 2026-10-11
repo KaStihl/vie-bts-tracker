@@ -30,3 +30,6 @@ PBI/*.patched.pbix
 # Power BI project: local-only files (data cache, per-machine settings)
 PBI/**/.pbi/cache.abf
 PBI/**/.pbi/localSettings.json
+
+# generated background pictures (the registered copies live in VIE-BTS.Report/StaticResources)
+PBI/_art/

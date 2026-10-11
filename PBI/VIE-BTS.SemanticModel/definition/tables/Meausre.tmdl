@@ -279,15 +279,133 @@ table Meausre
 
 	/// Red when Vienna shrinks, green when it grows.
 	measure 'VIE YoY Color' =
-			IF([VIE Latest YoY] < 0, "#B85C5C", "#2E8B57")
+			IF([VIE Latest YoY] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 53fbd417-1da6-4aec-979e-c9cfa7061180
 
 	/// Red when Bratislava shrinks, green when it grows.
 	measure 'BTS YoY Color' =
-			IF([BTS Latest YoY] < 0, "#B85C5C", "#2E8B57")
+			IF([BTS Latest YoY] < 0, "#FF7B7B", "#3DDC97")
 		displayFolder: report
 		lineageTag: 5ce29685-d0e8-4bdf-b88c-a6efa2a439bc
+
+	/// Footer stamp: when the model was last refreshed, in one piece.
+	measure 'Refresh Label' =
+			"Last refresh (UTC):  " & FORMAT(MAX('Query'[Column1]), "d mmm yyyy  ·  HH:mm")
+		displayFolder: report
+		lineageTag: 5f4f7eb9-4a24-4647-a0c9-160a9c1fe085
+
+	/// How many times larger Vienna is than Bratislava in the latest month.
+	measure 'Size Ratio' =
+			"Vienna is " & FORMAT(DIVIDE([VIE Latest Passengers], [BTS Latest Passengers]), "0.0") & "x larger"
+		displayFolder: report
+		lineageTag: 5e322a5e-7cb5-47e1-beb5-066b66c660ba
+
+	/// Vienna: passengers in the previous release (the newest month before the latest one that was published).
+	measure 'VIE Prev Passengers' =
+			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE")
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l)
+			RETURN CALCULATE(SUM('public monthly_traffic'[passengers]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] = _p)
+		formatString: 0
+		displayFolder: report
+		lineageTag: 214fea28-f57b-4524-869d-030c3bb052a2
+
+	/// Vienna: month of the previous release.
+	measure 'VIE Prev Month' =
+			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE")
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l)
+			RETURN FORMAT(_p, "mmm yyyy")
+		displayFolder: report
+		lineageTag: 18720fcc-9217-40e6-8d63-3e0fe9ee3ed1
+
+	/// Vienna: change versus the previous release.
+	measure 'VIE MoM' =
+			DIVIDE([VIE Latest Passengers] - [VIE Prev Passengers], [VIE Prev Passengers])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: c29c5dcf-4879-4f97-b267-886beb8a122b
+
+	/// Red when down, green when up (text colour, AA contrast on the card).
+	measure 'VIE MoM Color' =
+			IF([VIE MoM] < 0, "#FF7B7B", "#3DDC97")
+		displayFolder: report
+		lineageTag: 6eb926cb-32fd-40f1-bd9e-bdffe9be2ea9
+
+	/// Bratislava: passengers in the previous release (the newest month before the latest one that was published).
+	measure 'BTS Prev Passengers' =
+			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS")
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS", 'public monthly_traffic'[Date] < _l)
+			RETURN CALCULATE(SUM('public monthly_traffic'[passengers]), 'public monthly_traffic'[airport_code] = "BTS", 'public monthly_traffic'[Date] = _p)
+		formatString: 0
+		displayFolder: report
+		lineageTag: 986a3905-9807-4cdc-b9b7-5670af3eab0d
+
+	/// Bratislava: month of the previous release.
+	measure 'BTS Prev Month' =
+			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS")
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "BTS", 'public monthly_traffic'[Date] < _l)
+			RETURN FORMAT(_p, "mmm yyyy")
+		displayFolder: report
+		lineageTag: 27a7132b-8f59-49a6-a65d-3fed4b139a3b
+
+	/// Bratislava: change versus the previous release.
+	measure 'BTS MoM' =
+			DIVIDE([BTS Latest Passengers] - [BTS Prev Passengers], [BTS Prev Passengers])
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: report
+		lineageTag: d6f7b31a-0bcb-408a-a109-807a56dc52cc
+
+	/// Red when down, green when up (text colour, AA contrast on the card).
+	measure 'BTS MoM Color' =
+			IF([BTS MoM] < 0, "#FF7B7B", "#3DDC97")
+		displayFolder: report
+		lineageTag: 85e76ac3-39ba-4921-bbb9-b4546010327d
+
+	/// Vienna: year-over-year change per month, still filtered by the Airport slicer (one measure per airport so each can be coloured by sign).
+	measure 'VIE YoY' =
+			CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "VIE"))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: 36752419-345a-4a37-85f9-b2b9deb6440b
+
+	/// Bratislava: year-over-year change per month, still filtered by the Airport slicer (one measure per airport so each can be coloured by sign).
+	measure 'BTS YoY' =
+			CALCULATE([YoY Change PAX %], KEEPFILTERS('public monthly_traffic'[airport_code] = "BTS"))
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: 42d78d75-72e1-4502-b250-c6eb75abac4f
+
+	/// Vienna: the growth months (blank otherwise), so growth and decline can be coloured differently.
+	measure 'VIE YoY Up' =
+			VAR _v = [VIE YoY]
+			RETURN IF(_v >= 0, _v)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: 76f04f14-ebaa-48d2-b5e4-eb0d42b5830f
+
+	/// Vienna: the decline months (blank otherwise).
+	measure 'VIE YoY Down' =
+			VAR _v = [VIE YoY]
+			RETURN IF(_v < 0, _v)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: 0f5a83fd-3f71-4283-93eb-c20d0389d676
+
+	/// Bratislava: the growth months (blank otherwise), so growth and decline can be coloured differently.
+	measure 'BTS YoY Up' =
+			VAR _v = [BTS YoY]
+			RETURN IF(_v >= 0, _v)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: 3fac862e-2ff6-4744-b06f-523c111c5f6f
+
+	/// Bratislava: the decline months (blank otherwise).
+	measure 'BTS YoY Down' =
+			VAR _v = [BTS YoY]
+			RETURN IF(_v < 0, _v)
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: report
+		lineageTag: ec8666aa-4674-460b-a253-77742b562d49
 
 	/// Distinct date+hour slots (05:00-21:59, assumed UTC) that contain at least one captured departure.
 	measure 'Departure Hours With Data' =

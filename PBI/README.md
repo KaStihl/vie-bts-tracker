@@ -4,8 +4,8 @@
 
 | Path | What |
 |---|---|
-| `VIE-BTS.pbix` | the report (source of truth; the text files below are readable snapshots / helpers) |
-| `model/` | the semantic model as **TMDL** text, exported from the open report. Diff this in git to see model changes; it is not meant to be edited by hand |
+| `VIE-BTS.pbip`, `VIE-BTS.Report/`, `VIE-BTS.SemanticModel/` | the report project (source of truth): report as PBIR JSON, model as TMDL |
+| `VIE-BTS.pbix` | previous snapshot of the report (old design) |
 | `powerquery/` | ready-to-paste Power Query for the REST data source (see "Switch the data source") |
 | `tools/model-fixes-2026-10.ps1` | the script that applied the October-2026 model fixes through the Desktop's local Analysis Services port |
 | `tools/patch_report.py` | idempotent patcher for report-layer text/visual fixes inside the `.pbix` |
@@ -87,12 +87,22 @@ outside Desktop. The `.pbix` is kept only as the previous snapshot.
 |---|---|---|
 | ![Home](../docs/screenshots/home.png) | ![Trend](../docs/screenshots/trend.png) | ![Source](../docs/screenshots/source.png) |
 
-Why the old report looked dull: each page's *entire layout* (header, title, logo, washed-out panels, faded
-airport photo) was ONE 1.4 MB picture used as the page background, with the visuals laid over it. The new
-pages are native: solid page colour, white cards with soft shadows, a real header, KPI cards per airport (value,
-signed change in red/green, month shown), restyled charts (no linear trend line, no pink "Negative" zone, no
-smoothing, linear instead of log axis) and a short accurate "What happened" text instead of the smart-narrative
-box that summed percentages ("falling by 727 %").
+**What it is:** a dark "glass card" design on a generated route-network background, the FK's LAB logo in the
+header, one footer on every page, and native visuals only (no text is baked into a picture).
+
+* **Trend:** one KPI card per airport (passengers, change vs the same month last year, month, previous release and
+  its change), a growth-gap card, one growth chart per airport on its own axis (declines in red), a passengers
+  chart on a linear axis, and a three-step timeline of what happened.
+* **Home:** introduction, how to read the report (YoY, percentage points), data quality, and a "how it works" diagram.
+* **Source:** one card per source with working links, plus data notes.
+
+Checks applied (dataviz / design-critique / accessibility):
+* series colours validated with the dataviz palette validator on the card surface (dark mode):
+  Bratislava `#2CA6A4`, Vienna `#BC862B` - colour-blind distance 15, normal-vision distance 19, contrast >= 3:1;
+* text never wears a series colour (a thin accent bar above a card carries identity); text contrast on the card:
+  white 15:1, light 10:1, muted 6.9:1, green 8.6:1, red 6.0:1 (WCAG AA);
+* no dual axis, no trend line, recessive dashed grid, legend where there are two series, alt text on charts and cards;
+* two airports with very different scales get two charts (Vienna's -8 % stays readable next to Bratislava's +150 %).
 
 The old pages are still in the report, renamed "... (old design)" and hidden.
 
@@ -101,22 +111,26 @@ The old pages are still in the report, renamed "... (old design)" and hidden.
 The pages are generated, not hand-drawn, so the design is reviewable and repeatable:
 
 ```
-python PBI/tools/build_trend_page.py     # DAX measures for the report + the Trend page
-python PBI/tools/build_info_pages.py     # Home and Source pages (optional arg: page id to open first)
+pip install pillow
+python PBI/tools/build_report.py            # measures + background pictures + Home, Trend, Source (optional arg: page id to open first)
 ```
 
-Close Desktop first. Both scripts only write text files; every file is valid against Microsoft's PBIR JSON
-schemas (checked when they were written). Desktop is the final judge, so after a change open the project
-and look.
+`tools/make_backgrounds.py` draws the background pictures (decoration only). Close Desktop first. The scripts write
+text files only; every file is valid against Microsoft's PBIR schemas, and Desktop is the final judge, so after a
+change open the project and look.
 
-Lessons from getting it to load (so nobody has to rediscover them):
+Things learned getting it to load and render (so nobody has to rediscover them):
 * **A visual title/subtitle bound to a measure (`title.text = Measure`) makes Desktop fail with "Failed to load
-  the report".** Titles are static; dynamic values (month, change) are callouts inside the card.
-* Editing the `.pbix` archive from outside Desktop did not work (Desktop rejected two differently rebuilt
-  archives as corrupted even though the content was schema-valid); that is why the project uses `.pbip`.
-  `tools/patch_report.py` is kept only for reference.
+  the report".** Titles are static; dynamic values are callouts inside the card.
+* **A shape with fill transparency or an outline renders nothing.** Shapes use a solid fill; the border and rounding
+  come from the visual container (like on charts and cards).
+* **A column chart with a legend field cannot be coloured by value, and a measure-driven `fill` on columns is
+  ignored** (theme colours appear). Colour by sign instead with separate growth/decline measures and fixed colours.
+* Editing the `.pbix` archive from outside Desktop did not work (Desktop rejected two rebuilt archives as corrupted
+  although the content was schema-valid); that is why the project uses `.pbip`. `tools/patch_report.py` is kept only
+  for reference.
 * Windows path length (260 chars) bites when copying the project into deep folders.
 * Keep local-only files out of git: `.pbi/cache.abf` (data cache) and `.pbi/localSettings.json`.
 
-Known leftovers: the hidden work-in-progress pages ("BTS Operations (WIP)" references a measure that no longer
-exists, `Ryanair Share Trend Check`; "Carrier Analysis (WIP)").
+Known leftovers: the hidden work-in-progress pages ("BTS Operations (WIP)" references a measure that no longer exists,
+`Ryanair Share Trend Check`; "Carrier Analysis (WIP)").
