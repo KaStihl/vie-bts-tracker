@@ -381,7 +381,7 @@ def footer(prefix):
     def add(pair): out[pair[0]] = pair[1]
 
     add(textbox(f"{prefix}-src", 240, 1006, 1250, 44, 7100,
-                [("Sources: Vienna Airport and Bratislava Airport press releases and annual reports · OpenSky Network · open source: github.com/KaStihl/vie-bts-tracker",
+                [("Sources: Vienna Airport and Bratislava Airport press releases and annual reports · Eurostat · OpenSky Network · open source: github.com/KaStihl/vie-bts-tracker",
                   11, MUTED, False)]))
     add(text_card(f"{prefix}-refresh", 1500, 1006, 396, 36, 7200, "Refresh Label", 12, MUTED, align="right"))
     return out
@@ -451,10 +451,10 @@ def home():
         GAP,
         P("It is also a public case study in BI and data engineering: official sources, verified data and a transparent methodology.", 14, MUTED)]))
     # three tiles
-    tiles = [(240, "WHAT IT SHOWS", [P("Monthly passengers at both airports, year-over-year growth and the gap between them, from official sources only.", 15, SOFT)]),
+    tiles = [(240, "WHAT IT SHOWS", [P("Monthly passengers at both airports, year-over-year growth and the gap between them, from official sources. Eurostat fills months an airport did not publish.", 15, SOFT)]),
              (798, "HOW TO READ IT", [P("YoY: change versus the same month a year earlier.", 13, SOFT, bullet=True),
                                       P("pp (percentage points): difference between two growth rates, e.g. +76 % and −7 % is 83 pp.", 13, SOFT, bullet=True),
-                                      P("A blank month was not published: never filled in.", 13, SOFT, bullet=True)]),
+                                      P("A month tagged Eurostat was not published by the airport; its growth is computed within Eurostat.", 13, SOFT, bullet=True)]),
              (1356, "DATA QUALITY", [P("Collected automatically and checked by hand where the sources are less structured. Airline-level flight data "
                                        "(OpenSky) is still short and incomplete, so it is not shown yet.", 15, SOFT)])]
     for i, (x, head, body) in enumerate(tiles):
@@ -463,7 +463,7 @@ def home():
     # pipeline
     add(glass("h-pipe", 240, 578, 1656, 400, 5400))
     add(textbox("h-pipe-h", 272, 590, 700, 34, 5500, [("HOW IT WORKS", 11, MUTED, True)]))
-    boxes = [(272, "Official sources", "Airport press releases, annual reports and OpenSky flight data"),
+    boxes = [(272, "Official sources", "Airport press releases, annual reports, Eurostat and OpenSky flight data"),
              (698, "Automated scrapers", "Python jobs on GitHub Actions: hourly, daily and weekly"),
              (1124, "Supabase", "Postgres database with read-only public access"),
              (1550, "Power BI", "This report, refreshed from the database")]
@@ -494,7 +494,8 @@ def source():
          "opensky-network.org", "https://opensky-network.org/"),
         ("OPEN SOURCE", "Code and methodology", "The whole pipeline is public: scrapers, schedules, database schema and this report.",
          "github.com/KaStihl/vie-bts-tracker", "https://github.com/KaStihl/vie-bts-tracker"),
-        ("REUSE", "Terms of the data", "The data belongs to the original publishers (airports, OpenSky). Check their terms before reusing it.", None, None),
+        ("MONTHLY  ·  GAP FILLER", "Eurostat", "Fills months an airport did not publish. Bratislava matches the airport's count; Vienna is 1–3 % higher.",
+         "ec.europa.eu › eurostat › avia_paoa", "https://ec.europa.eu/eurostat/databrowser/view/avia_paoa/"),
     ]
     for i, (kind, name, desc, link, url) in enumerate(cards):
         x, y = 240 + (i % 3) * 558, 124 + (i // 3) * 244
@@ -503,14 +504,16 @@ def source():
         if link:
             paras += [GAP, P(link, 13, ACCENT, False, url=url)]
         add(rich_textbox(f"s-c{i}-t", x + 22, y + 14, 496, 204, 5100, paras))
-    add(glass("s-notes", 240, 612, 1656, 250, 5200))
-    add(rich_textbox("s-notes-t", 262, 626, 1612, 224, 5300, [
+    add(glass("s-notes", 240, 612, 1656, 310, 5200))
+    add(rich_textbox("s-notes-t", 262, 626, 1612, 284, 5300, [
         P("DATA NOTES", 11, MUTED, True), GAP,
-        P("Vienna does not publish a figure for every month, and Bratislava's press releases are free text. A month that cannot be read reliably is left out, never guessed.", 15, SOFT, bullet=True),
+        P("Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat and tagged as such; a month nobody published is left out, never guessed.", 15, SOFT, bullet=True),
         GAP,
-        P("Year-over-year change uses the percentage the airport published; where it gave none, it is computed from the same month a year earlier.", 15, SOFT, bullet=True),
+        P("Year-over-year change uses the percentage the airport published; where it gave none (and for Eurostat months) it is computed from the same month a year earlier in the same source.", 15, SOFT, bullet=True),
         GAP,
-        P("OpenSky movement data started in mid-August 2026 and has gaps: use it for shares between airlines, not for absolute counts.", 15, SOFT, bullet=True)]))
+        P("OpenSky movement data started in mid-August 2026 and has gaps: use it for shares between airlines, not for absolute counts.", 15, SOFT, bullet=True),
+        GAP,
+        P("The data belongs to the original publishers (airports, Eurostat, OpenSky). Check their terms before reusing it.", 15, SOFT, bullet=True)]))
     v.update(footer("s"))
     return v
 

@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Monthly passengers at both airports, year-over-year growth and the gap between them, from official sources only.",
+                    "value": "Monthly passengers at both airports, year-over-year growth and the gap between them, from official sources. Eurostat fills months an airport did not publish.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "15pt",

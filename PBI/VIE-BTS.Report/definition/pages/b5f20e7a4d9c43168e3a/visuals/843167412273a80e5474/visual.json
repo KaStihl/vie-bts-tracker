@@ -5,7 +5,7 @@
     "x": 262,
     "y": 626,
     "z": 5300,
-    "height": 224,
+    "height": 284,
     "width": 1612,
     "tabOrder": 5300
   },
@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Vienna does not publish a figure for every month, and Bratislava's press releases are free text. A month that cannot be read reliably is left out, never guessed.",
+                    "value": "Vienna skips several months a year and Bratislava's press releases are free text. Months an airport did not publish are filled from Eurostat and tagged as such; a month nobody published is left out, never guessed.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "15pt",
@@ -74,7 +74,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Year-over-year change uses the percentage the airport published; where it gave none, it is computed from the same month a year earlier.",
+                    "value": "Year-over-year change uses the percentage the airport published; where it gave none (and for Eurostat months) it is computed from the same month a year earlier in the same source.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "15pt",
@@ -103,6 +103,34 @@
                 "textRuns": [
                   {
                     "value": "OpenSky movement data started in mid-August 2026 and has gaps: use it for shares between airlines, not for absolute counts.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "15pt",
+                      "color": "#C9D6E3"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left",
+                "listType": "bullet",
+                "indent": 1
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "5pt",
+                      "color": "#C9D6E3"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "The data belongs to the original publishers (airports, Eurostat, OpenSky). Check their terms before reusing it.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "15pt",

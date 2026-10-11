@@ -14,7 +14,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from . import vie_scraper, bts_scraper, db
+from . import vie_scraper, bts_scraper, eurostat_monthly, db
 
 
 def run() -> None:
@@ -54,6 +54,19 @@ def run() -> None:
             print("    read raw_text, then UPDATE month and verified=1.")
     else:
         problems.append("BTS press-release scraper returned 0 monthly figures (page layout changed?)")
+
+    print("
+=== Eurostat monthly (fills months the airports did not publish) ===")
+    try:
+        euro = eurostat_monthly.scrape()
+    except Exception as exc:  # network / API change: report, but do not lose the other sources
+        euro = []
+        problems.append(f"Eurostat request failed: {exc}")
+    if euro:
+        db.upsert_eurostat_monthly(conn, euro)
+        print(f"Stored {len(euro)} Eurostat monthly records.")
+    elif not any("Eurostat" in p for p in problems):
+        problems.append("Eurostat returned 0 monthly records (dataset changed?)")
 
     if os.environ.get("EXPORT_CSV") == "1":
         export_dir = Path(__file__).parent / "exports"

@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Airport press releases, annual reports and OpenSky flight data",
+                    "value": "Airport press releases, annual reports, Eurostat and OpenSky flight data",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",

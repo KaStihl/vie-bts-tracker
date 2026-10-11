@@ -171,6 +171,42 @@ def upsert_annual_report_monthly(conn, records: list[dict]) -> None:
     conn.commit()
 
 
+EUROSTAT_DDL = """
+CREATE TABLE IF NOT EXISTS public.eurostat_monthly (
+    airport_code        text        NOT NULL,
+    year                integer     NOT NULL,
+    month               integer     NOT NULL,
+    passengers          integer     NOT NULL,   -- passengers on board (arrivals + departures)
+    passengers_carried  integer,
+    scraped_at          timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (airport_code, year, month)
+);
+ALTER TABLE public.eurostat_monthly ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public read eurostat_monthly" ON public.eurostat_monthly;
+CREATE POLICY "public read eurostat_monthly" ON public.eurostat_monthly FOR SELECT TO anon USING (true);
+GRANT SELECT ON public.eurostat_monthly TO anon;
+"""
+
+
+def upsert_eurostat_monthly(conn, records: list[dict]) -> None:
+    """Create the table on first use (idempotent), then upsert. Same read-only anon access as the other tables."""
+    with conn.cursor() as cur:
+        cur.execute(EUROSTAT_DDL)
+        psycopg2.extras.execute_values(
+            cur,
+            """
+            INSERT INTO public.eurostat_monthly (airport_code, year, month, passengers, passengers_carried)
+            VALUES %s
+            ON CONFLICT (airport_code, year, month) DO UPDATE SET
+                passengers = excluded.passengers,
+                passengers_carried = excluded.passengers_carried,
+                scraped_at = NOW()
+            """,
+            [(r["airport_code"], r["year"], r["month"], r["passengers"], r["passengers_carried"]) for r in records],
+        )
+    conn.commit()
+
+
 def export_csv(conn, out_dir) -> None:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

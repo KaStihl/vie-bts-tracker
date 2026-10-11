@@ -9,7 +9,7 @@ model Model
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["public airports","public annual_traffic","public carrier_movements","public monthly_traffic","_Measures","Query"]
+annotation PBI_QueryOrder = ["public airports","public annual_traffic","public carrier_movements","public monthly_traffic","_Measures","Query","SupabaseUrl","SupabaseAnonKey","fnSupabase"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -21,10 +21,6 @@ ref table _Measures
 ref table DateTable
 ref table Query
 ref table Airport
-
-ref expression SupabaseUrl
-ref expression SupabaseAnonKey
-ref expression fnSupabase
 
 ref cultureInfo en-US
 

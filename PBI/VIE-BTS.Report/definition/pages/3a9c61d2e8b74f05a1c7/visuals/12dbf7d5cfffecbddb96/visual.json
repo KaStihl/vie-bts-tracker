@@ -76,7 +76,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "A blank month was not published: never filled in.",
+                    "value": "A month tagged Eurostat was not published by the airport; its growth is computed within Eurostat.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",

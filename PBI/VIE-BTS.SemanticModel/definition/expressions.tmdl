@@ -12,7 +12,7 @@ expression fnSupabase =
 		(table as text, order as text, filters as nullable record) as table =>
 		let
 		    PageSize = 1000,   // raise to 10000+ after raising "Max rows" in Supabase -> Settings -> API
-
+		
 		    BaseQuery = [select = "*", order = order, limit = Text.From(PageSize)],
 		    Fetch = (offset as number) as list =>
 		        Json.Document(
@@ -29,7 +29,7 @@ expression fnSupabase =
 		                ]
 		            )
 		        ),
-
+		
 		    Pages = List.Generate(
 		        () => [off = 0, rows = Fetch(0)],
 		        each List.Count([rows]) > 0,
@@ -39,7 +39,7 @@ expression fnSupabase =
 		        ],
 		        each [rows]
 		    ),
-
+		
 		    All = List.Combine(Pages),
 		    Result = if List.Count(All) = 0 then #table({}, {}) else Table.FromRecords(All)
 		in

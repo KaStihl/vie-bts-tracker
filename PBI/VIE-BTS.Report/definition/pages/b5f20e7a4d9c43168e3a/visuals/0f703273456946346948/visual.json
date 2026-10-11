@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "REUSE",
+                    "value": "MONTHLY  ·  GAP FILLER",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "11pt",
@@ -46,7 +46,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Terms of the data",
+                    "value": "Eurostat",
                     "textStyle": {
                       "fontFamily": "Segoe UI Semibold",
                       "fontSize": "19pt",
@@ -73,12 +73,39 @@
               {
                 "textRuns": [
                   {
-                    "value": "The data belongs to the original publishers (airports, OpenSky). Check their terms before reusing it.",
+                    "value": "Fills months an airport did not publish. Bratislava matches the airport's count; Vienna is 1–3 % higher.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "13pt",
                       "color": "#C9D6E3"
                     }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": " ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "5pt",
+                      "color": "#C9D6E3"
+                    }
+                  }
+                ],
+                "horizontalTextAlignment": "left"
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "ec.europa.eu › eurostat › avia_paoa",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "13pt",
+                      "color": "#8FE3DC"
+                    },
+                    "url": "https://ec.europa.eu/eurostat/databrowser/view/avia_paoa/"
                   }
                 ],
                 "horizontalTextAlignment": "left"
