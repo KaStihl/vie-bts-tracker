@@ -332,16 +332,18 @@ table _Measures
 	/// Vienna: passengers in the previous release (the newest month before the latest one that was published).
 	measure 'VIE Prev Passengers' =
 			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE")
-			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l)
+			VAR _sl = CALCULATE(MAX('public monthly_traffic'[source]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] = _l)
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l, 'public monthly_traffic'[source] = _sl)
 			RETURN CALCULATE(SUM('public monthly_traffic'[passengers]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] = _p)
 		formatString: 0
 		displayFolder: report
 		lineageTag: 214fea28-f57b-4524-869d-030c3bb052a2
 
-	/// Vienna: month of the previous release.
+	/// Vienna: month of the previous release from the same source as the latest month (Eurostat and the airport count slightly differently).
 	measure 'VIE Prev Month' =
 			VAR _l = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE")
-			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l)
+			VAR _sl = CALCULATE(MAX('public monthly_traffic'[source]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] = _l)
+			VAR _p = CALCULATE(MAX('public monthly_traffic'[Date]), 'public monthly_traffic'[airport_code] = "VIE", 'public monthly_traffic'[Date] < _l, 'public monthly_traffic'[source] = _sl)
 			RETURN FORMAT(_p, "mmm yyyy")
 		displayFolder: report
 		lineageTag: 18720fcc-9217-40e6-8d63-3e0fe9ee3ed1

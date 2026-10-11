@@ -535,8 +535,14 @@ for _code, _name, _col in (("VIE", "Vienna", VIE), ("BTS", "Bratislava", BTS)):
                                    f"{_name}: the growth months (blank otherwise), so growth and decline can be coloured differently.")
     MEASURES[f"{_code} YoY Down"] = ([f'VAR _v = [{_code} YoY]', 'RETURN IF(_v < 0, _v)'], "0.00%;-0.00%;0.00%",
                                      f"{_name}: the decline months (blank otherwise).")
+    # Vienna: Eurostat counts 1-3 % above the airport's own figure, so "previous release" is the previous month
+    # from the SAME source as the latest month (never compare across counting bases).
+    _src_var = (f'VAR _sl = CALCULATE(MAX(\'public monthly_traffic\'[source]), \'public monthly_traffic\'[airport_code] = "VIE", '
+                f'\'public monthly_traffic\'[Date] = _l)\n') if _code == "VIE" else ""
+    _src_flt = ", 'public monthly_traffic'[source] = _sl" if _code == "VIE" else ""
     _prev = (f'VAR _l = CALCULATE(MAX(\'public monthly_traffic\'[Date]), \'public monthly_traffic\'[airport_code] = "{_code}")\n'
-             f'VAR _p = CALCULATE(MAX(\'public monthly_traffic\'[Date]), \'public monthly_traffic\'[airport_code] = "{_code}", \'public monthly_traffic\'[Date] < _l)')
+             + _src_var +
+             f'VAR _p = CALCULATE(MAX(\'public monthly_traffic\'[Date]), \'public monthly_traffic\'[airport_code] = "{_code}", \'public monthly_traffic\'[Date] < _l{_src_flt})')
     MEASURES[f"{_code} Prev Passengers"] = (_prev.split("\n") + [
         f'RETURN CALCULATE(SUM(\'public monthly_traffic\'[passengers]), \'public monthly_traffic\'[airport_code] = "{_code}", \'public monthly_traffic\'[Date] = _p)'],
         "0", f"{_name}: passengers in the previous release (the newest month before the latest one that was published).")
