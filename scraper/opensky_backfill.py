@@ -49,6 +49,8 @@ def fetch_flights_for_aircraft(token: str, icao24: str, begin: int, end: int) ->
         timeout=60,
     )
     core.note_credits(resp.headers.get("X-Rate-Limit-Remaining"))
+    if resp.status_code == 429:
+        print(f"  HTTP 429 {core._describe_429(resp)}")
     if resp.status_code == 404:
         return []
     if resp.status_code == 429:
@@ -138,6 +140,8 @@ def run_backfill(client_id: str, client_secret: str, connection_string: str) -> 
                 raise
             calls += 1
             rows_seen += len(group)
+            if calls == 1 or calls % 25 == 0:
+                print(f"  [call {calls}: credits remaining {core.credits_remaining}]")
             time.sleep(SLEEP_BETWEEN_CALLS)
 
             with conn.cursor() as write_cur:
