@@ -26,6 +26,10 @@ external trigger below is **optional**: it only makes the data fresher, it is no
 arrivals and backfill jobs stop when fewer than 1000 credits are left (`OPENSKY_CREDIT_RESERVE`) so the capture always
 has credits. Departures from before the change (11-13 Oct) are lost: the window cannot reach back further.
 
+If the account's credits are exhausted (HTTP 429, the log prints OpenSky's `X-Rate-Limit-*` headers, which say when they
+come back), the capture tries the **anonymous** budget (about 400 credits a day per IP, 30 per call) so departures keep
+flowing; arrivals and backfill just skip the run.
+
 ## Reliable hourly capture (optional, ~5 minutes)
 
 GitHub's `schedule:` trigger is best-effort. Measured on this repo between

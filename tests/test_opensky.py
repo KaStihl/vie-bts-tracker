@@ -79,7 +79,7 @@ def test_capture_looks_back_twelve_hours_by_default(monkeypatch):
     seen = []
     monkeypatch.setattr(core, "get_access_token", lambda *a: "tok")
     monkeypatch.setattr(core, "SLEEP_BETWEEN_CALLS", 0)
-    monkeypatch.setattr(core, "fetch_window", lambda tok, icao, b, e, d: seen.append((e - b) // 60) or [])
+    monkeypatch.setattr(core, "fetch_window", lambda tok, icao, b, e, d, **kw: seen.append((e - b) // 60) or [])
     core.capture_recent("id", "secret")
     assert seen == [core.CAPTURE_WINDOW_MINUTES] * 2 and core.CAPTURE_WINDOW_MINUTES == 720
 
@@ -87,7 +87,7 @@ def test_capture_looks_back_twelve_hours_by_default(monkeypatch):
 def test_capture_steps_down_when_the_window_is_refused(monkeypatch):
     seen = []
 
-    def fake(tok, icao, b, e, d):
+    def fake(tok, icao, b, e, d, **kw):
         minutes = (e - b) // 60
         seen.append(minutes)
         if minutes > 360:
@@ -110,3 +110,47 @@ def test_credit_reserve(monkeypatch):
     assert core.credits_low()
     core.note_credits("garbage")                        # a bad header must not reset the knowledge
     assert core.credits_low()
+
+
+class _Resp:
+    def __init__(self, status, headers=None, body=None, text=""):
+        self.status_code, self.headers, self._body, self.text = status, headers or {}, body, text
+
+    def json(self):
+        return self._body
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise RuntimeError(f"HTTP {self.status_code}")
+
+
+class _Session:
+    def __init__(self, responses):
+        self.responses, self.calls = list(responses), []
+
+    def get(self, url, headers=None, params=None, timeout=None):
+        self.calls.append(dict(headers or {}))
+        return self.responses.pop(0)
+
+
+def test_capture_falls_back_to_the_anonymous_budget_when_the_account_is_exhausted(monkeypatch):
+    sess = _Session([_Resp(429, {"X-Rate-Limit-Retry-After-Seconds": "3600"}), _Resp(200, body=[_flight(1)])])
+    monkeypatch.setattr(core, "session", lambda: sess)
+    out = core.fetch_window("tok", "LOWW", 0, 10, "departure", anonymous_fallback=True)
+    assert out == [_flight(1)]
+    assert sess.calls == [{"Authorization": "Bearer tok"}, {}]       # second call carries no token
+
+
+def test_without_fallback_a_429_still_skips_the_run(monkeypatch):
+    sess = _Session([_Resp(429)])
+    monkeypatch.setattr(core, "session", lambda: sess)
+    with pytest.raises(RuntimeError, match="RATE_LIMITED"):
+        core.fetch_window("tok", "LOWW", 0, 10, "arrival")
+    assert len(sess.calls) == 1
+
+
+def test_anonymous_429_ends_the_run_too(monkeypatch):
+    sess = _Session([_Resp(429), _Resp(429)])
+    monkeypatch.setattr(core, "session", lambda: sess)
+    with pytest.raises(RuntimeError, match="RATE_LIMITED"):
+        core.fetch_window("tok", "LOWW", 0, 10, "departure", anonymous_fallback=True)

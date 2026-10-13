@@ -132,12 +132,21 @@ def note_credits(value) -> None:
         pass
 
 
+def _describe_429(resp) -> str:
+    """What OpenSky says about the limit: the headers tell when the credits come back."""
+    keys = ("X-Rate-Limit-Remaining", "X-Rate-Limit-Retry-After-Seconds", "Retry-After")
+    seen = {k: resp.headers.get(k) for k in keys if resp.headers.get(k) is not None}
+    return f"HTTP 429 {seen or '(no rate-limit headers)'} {resp.text.strip()[:120]!r}"
+
+
 def fetch_window(
-    token: str, icao: str, begin: int, end: int, direction: str
+    token: str | None, icao: str, begin: int, end: int, direction: str, anonymous_fallback: bool = False
 ) -> list[dict]:
+    """token=None calls the API anonymously (OpenSky allows that with a small daily budget).
+    anonymous_fallback: when the account's credits are exhausted (429), try once without the token."""
     endpoint = "departure" if direction == "departure" else "arrival"
     url = f"{API_BASE}/flights/{endpoint}"
-    headers = {"Authorization": f"Bearer {token}"}
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
     params = {"airport": icao, "begin": begin, "end": end}
 
     resp = session().get(url, headers=headers, params=params, timeout=60)
@@ -145,15 +154,18 @@ def fetch_window(
     if remaining is not None:
         print(f"  [credits remaining: {remaining}]")
         note_credits(remaining)
+    if resp.status_code == 429:
+        print(f"  {'anonymous ' if not token else ''}{_describe_429(resp)}")
+        if token and anonymous_fallback:
+            print("  account credits exhausted: trying the anonymous budget for this call")
+            return fetch_window(None, icao, begin, end, direction)
+        # Daily credit budget exhausted (shared across all scripts on this account). Not a bug: this run is
+        # skipped and a later one catches up.
+        raise RuntimeError("RATE_LIMITED")
     if resp.status_code == 404:
         return []  # no flights in this window -- normal, not an error
     if resp.status_code == 403 and "historical" in resp.text.lower():
         raise WindowTooOld(resp.text.strip()[:120])
-    if resp.status_code == 429:
-        # Daily credit budget exhausted (shared across all scripts on this
-        # account -- see opensky_historical_backfill.py). Not a bug, just
-        # means this run gets skipped; next scheduled run will catch up.
-        raise RuntimeError("RATE_LIMITED")
     resp.raise_for_status()
     return resp.json()
 
@@ -177,7 +189,7 @@ def capture_recent(client_id: str, client_secret: str) -> list[dict]:
     for our_code, icao in AIRPORTS.items():
         for i, minutes in enumerate(windows):
             try:
-                flights = fetch_window(token, icao, now - minutes * 60, now, "departure")
+                flights = fetch_window(token, icao, now - minutes * 60, now, "departure", anonymous_fallback=True)
                 break
             except WindowTooOld as e:
                 if i == len(windows) - 1:
