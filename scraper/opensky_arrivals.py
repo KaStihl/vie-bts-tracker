@@ -59,6 +59,10 @@ def capture_arrivals(client_id: str, client_secret: str, now: datetime | None = 
 
     for begin, end in utc_day_windows(now, DAYS_PER_RUN):
         for our_code, icao in core.AIRPORTS.items():
+            if core.credits_low():
+                print(f"Stopping early: {core.credits_remaining} OpenSky credits left, keeping "
+                      f"{core.CREDIT_RESERVE} in reserve for the departure capture.")
+                return [asdict(m) for m in movements]
             flights = core.fetch_window(token, icao, begin, end, "arrival")
             for f in flights:
                 callsign = (f.get("callsign") or "").strip()

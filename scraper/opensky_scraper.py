@@ -19,21 +19,18 @@ created at https://opensky-network.org under Account -> API Client.
 Uses the OAuth2 client-credentials flow (old username/password Basic Auth was
 retired March 2026).
 
-IMPORTANT, confirmed live against the real API (2026-08): /flights/departure
-and /flights/arrival now only accept a time window within roughly the last
-HOUR -- older docs describing a 7-day historical window are out of date.
-This means NO retroactive backfill is possible without applying for Trino
-access (gatekept, institutional-focused, not pursued here). Instead, this
-script is designed to run FREQUENTLY (roughly hourly, via GitHub Actions
-cron) and accumulate its own history going forward from whenever it's first
-deployed. Each run captures a window slightly LONGER than the cron interval
-(65 min for an hourly job) so a late/missed run doesn't leave a gap -- any
-overlap is harmless, deduplicated by the UNIQUE constraint in
-supabase_schema.sql (ON CONFLICT DO NOTHING).
+IMPORTANT, window size (checked live): in 2026-08 /flights/departure only accepted roughly the last HOUR; on
+2026-10-13 it answered windows of up to ~18 hours (62 LOWW departures in 12 h) and refused 24 hours with 403
+"You cannot access historical flights". Retroactive backfill beyond that still needs Trino access (gatekept, not
+pursued here). So each run looks back CAPTURE_WINDOW_MINUTES (default 12 h, env OPENSKY_CAPTURE_MINUTES), which
+makes the job tolerant of GitHub's irregular "hourly" cron: any overlap is harmless, deduplicated by the UNIQUE
+constraint in supabase_schema.sql (ON CONFLICT DO NOTHING). If the limit shrinks again the run steps down to
+smaller windows by itself.
 
 Requires: pip install requests psycopg2-binary
 """
 
+import os
 import time
 from dataclasses import dataclass, asdict
 from datetime import datetime, timedelta, timezone
@@ -69,11 +66,22 @@ CALLSIGN_TO_AIRLINE = {
     "LDA": "Lauda",
 }
 
-# Capture window per run. Set longer than your actual cron interval (e.g. 65
-# min for an hourly cron) so a late run doesn't leave a gap -- confirmed live
-# that ~60 min is the max the API accepts, so don't push this much higher.
-CAPTURE_WINDOW_MINUTES = 65
+# Capture window per run. GitHub's "hourly" cron really runs every 4-8 hours, so a window of one hour loses most
+# departures. Checked live on 2026-10-13: /flights/departure returns windows of up to ~18 hours (a 24-hour window
+# answers 403 "You cannot access historical flights"), so each run now looks back 12 hours. Overlaps are harmless
+# (ON CONFLICT DO NOTHING). If the API ever narrows the limit again, the run steps down to a smaller window.
+CAPTURE_WINDOW_MINUTES = int(os.environ.get("OPENSKY_CAPTURE_MINUTES", "720"))
+FALLBACK_WINDOWS_MINUTES = (360, 120, 65)
 SLEEP_BETWEEN_CALLS = 2  # seconds, be polite to a free shared API
+
+# The daily credit budget is shared by the capture, arrivals and backfill jobs. The two daily jobs stop when fewer
+# than this many credits remain, so the capture (which must not miss anything) always has some left.
+CREDIT_RESERVE = int(os.environ.get("OPENSKY_CREDIT_RESERVE", "1000"))
+credits_remaining: int | None = None     # last X-Rate-Limit-Remaining seen
+
+
+def credits_low() -> bool:
+    return credits_remaining is not None and credits_remaining < CREDIT_RESERVE
 
 
 @dataclass
@@ -112,6 +120,18 @@ def resolve_airline(callsign: str) -> str:
     return CALLSIGN_TO_AIRLINE.get(prefix, "OTHER")
 
 
+class WindowTooOld(RuntimeError):
+    """The API refuses this window as 'historical'; retry with a shorter one."""
+
+
+def note_credits(value) -> None:
+    global credits_remaining
+    try:
+        credits_remaining = int(value)
+    except (TypeError, ValueError):
+        pass
+
+
 def fetch_window(
     token: str, icao: str, begin: int, end: int, direction: str
 ) -> list[dict]:
@@ -124,8 +144,11 @@ def fetch_window(
     remaining = resp.headers.get("X-Rate-Limit-Remaining")
     if remaining is not None:
         print(f"  [credits remaining: {remaining}]")
+        note_credits(remaining)
     if resp.status_code == 404:
         return []  # no flights in this window -- normal, not an error
+    if resp.status_code == 403 and "historical" in resp.text.lower():
+        raise WindowTooOld(resp.text.strip()[:120])
     if resp.status_code == 429:
         # Daily credit budget exhausted (shared across all scripts on this
         # account -- see opensky_historical_backfill.py). Not a bug, just
@@ -149,10 +172,17 @@ def capture_recent(client_id: str, client_secret: str) -> list[dict]:
     movements: list[Movement] = []
 
     now = int(time.time())
-    begin = now - CAPTURE_WINDOW_MINUTES * 60
+    windows = [CAPTURE_WINDOW_MINUTES] + [m for m in FALLBACK_WINDOWS_MINUTES if m < CAPTURE_WINDOW_MINUTES]
 
     for our_code, icao in AIRPORTS.items():
-        flights = fetch_window(token, icao, begin, now, "departure")
+        for i, minutes in enumerate(windows):
+            try:
+                flights = fetch_window(token, icao, now - minutes * 60, now, "departure")
+                break
+            except WindowTooOld as e:
+                if i == len(windows) - 1:
+                    raise
+                print(f"  window of {minutes} min refused ({e}); trying {windows[i + 1]} min")
         for f in flights:
             callsign = (f.get("callsign") or "").strip()
             other_airport = f.get("estArrivalAirport")
@@ -235,7 +265,7 @@ if __name__ == "__main__":
             "PowerShell: $env:OPENSKY_CLIENT_ID='...'; $env:OPENSKY_CLIENT_SECRET='...'"
         )
 
-    print(f"Capturing last {CAPTURE_WINDOW_MINUTES} minutes of VIE/BTS DEPARTURES...")
+    print(f"Capturing the last {CAPTURE_WINDOW_MINUTES} minutes of VIE/BTS DEPARTURES...")
     try:
         results = capture_recent(client_id, client_secret)
     except RuntimeError as e:

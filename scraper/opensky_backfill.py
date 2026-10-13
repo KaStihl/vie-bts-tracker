@@ -48,6 +48,7 @@ def fetch_flights_for_aircraft(token: str, icao24: str, begin: int, end: int) ->
         params={"icao24": icao24, "begin": begin, "end": end},
         timeout=60,
     )
+    core.note_credits(resp.headers.get("X-Rate-Limit-Remaining"))
     if resp.status_code == 404:
         return []
     if resp.status_code == 429:
@@ -119,6 +120,10 @@ def run_backfill(client_id: str, client_secret: str, connection_string: str) -> 
               f"(will make at most {MAX_API_CALLS} API calls).")
 
         for group in groups[:MAX_API_CALLS]:
+            if core.credits_low():
+                print(f"Stopping early: {core.credits_remaining} OpenSky credits left, keeping "
+                      f"{core.CREDIT_RESERVE} in reserve for the departure capture.")
+                break
             times = [r["movement_time"] for r in group]
             window_begin = int((min(times) - timedelta(hours=1)).timestamp())
             window_end = int((max(times) + timedelta(hours=8)).timestamp())

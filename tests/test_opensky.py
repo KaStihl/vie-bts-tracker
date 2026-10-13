@@ -63,3 +63,50 @@ def test_groups_are_per_aircraft_day_newest_first():
     ]
     groups = group_rows(rows)
     assert [sorted(r["id"] for r in g) for g in groups] == [[3], [4], [1, 2]]
+
+
+# ---- capture window and credit reserve (OpenSky answered up to ~18 h on 2026-10-13, refuses 24 h)
+import pytest
+
+from scraper import opensky_scraper as core
+
+
+def _flight(t):
+    return {"icao24": "abc123", "callsign": "RYR1AB ", "firstSeen": t, "estArrivalAirport": "EGSS"}
+
+
+def test_capture_looks_back_twelve_hours_by_default(monkeypatch):
+    seen = []
+    monkeypatch.setattr(core, "get_access_token", lambda *a: "tok")
+    monkeypatch.setattr(core, "SLEEP_BETWEEN_CALLS", 0)
+    monkeypatch.setattr(core, "fetch_window", lambda tok, icao, b, e, d: seen.append((e - b) // 60) or [])
+    core.capture_recent("id", "secret")
+    assert seen == [core.CAPTURE_WINDOW_MINUTES] * 2 and core.CAPTURE_WINDOW_MINUTES == 720
+
+
+def test_capture_steps_down_when_the_window_is_refused(monkeypatch):
+    seen = []
+
+    def fake(tok, icao, b, e, d):
+        minutes = (e - b) // 60
+        seen.append(minutes)
+        if minutes > 360:
+            raise core.WindowTooOld("You cannot access historical flights")
+        return [_flight(e - 100)]
+
+    monkeypatch.setattr(core, "get_access_token", lambda *a: "tok")
+    monkeypatch.setattr(core, "SLEEP_BETWEEN_CALLS", 0)
+    monkeypatch.setattr(core, "fetch_window", fake)
+    rows = core.capture_recent("id", "secret")
+    assert seen == [720, 360, 720, 360] and len(rows) == 2
+
+
+def test_credit_reserve(monkeypatch):
+    monkeypatch.setattr(core, "credits_remaining", None)
+    assert not core.credits_low()                       # unknown: keep going
+    core.note_credits("5000")
+    assert not core.credits_low()
+    core.note_credits(str(core.CREDIT_RESERVE - 1))
+    assert core.credits_low()
+    core.note_credits("garbage")                        # a bad header must not reset the knowledge
+    assert core.credits_low()

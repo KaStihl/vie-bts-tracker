@@ -18,7 +18,15 @@ Every job has a `timeout-minutes`, a `concurrency` group (no overlapping runs) a
 read-only `GITHUB_TOKEN` permissions. All can be started by hand
 (Actions -> workflow -> *Run workflow*).
 
-## Reliable hourly capture (one-time setup, ~5 minutes)
+## Capture window (since 13 Oct 2026) and the optional hourly trigger
+
+Each capture run now looks back **12 hours** (`OPENSKY_CAPTURE_MINUTES`), because OpenSky answers windows of up to
+about 18 hours (24 hours is refused with 403). So the throttled GitHub cron no longer loses departures, and the
+external trigger below is **optional**: it only makes the data fresher, it is not needed for completeness. The
+arrivals and backfill jobs stop when fewer than 1000 credits are left (`OPENSKY_CREDIT_RESERVE`) so the capture always
+has credits. Departures from before the change (11-13 Oct) are lost: the window cannot reach back further.
+
+## Reliable hourly capture (optional, ~5 minutes)
 
 GitHub's `schedule:` trigger is best-effort. Measured on this repo between
 19 Aug and 10 Oct 2026, the "hourly" capture ran about **once every 5 hours**, and
