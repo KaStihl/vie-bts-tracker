@@ -155,6 +155,59 @@ def extract_monthly_figure(lead: str) -> Optional[MonthlyFigure]:
     return MonthlyFigure(passengers=passengers, yoy_pct=yoy, month=infer_month(text), approximate=approximate)
 
 
+CARDINAL_MONTHS = {"two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9,
+                   "ten": 10, "eleven": 11, "twelve": 12}
+# "first nine months of 2026", "first quarter", "first half", "from January to September"
+_THROUGH_RES = (
+    (re.compile(r"first\s+(" + "|".join(CARDINAL_MONTHS) + r")\s+months", re.IGNORECASE),
+     lambda m: CARDINAL_MONTHS[m.group(1).lower()]),
+    (re.compile(r"first\s+quarter", re.IGNORECASE), lambda m: 3),
+    (re.compile(r"first\s+half", re.IGNORECASE), lambda m: 6),
+    (re.compile(rf"from\s+January\s+(?:to|until|through)\s+({_MONTH_ALT})\b"), lambda m: MONTH_NAMES[m.group(1)]),
+)
+
+
+@dataclass
+class CumulativeFigure:
+    through_month: int          # the total covers January .. through_month
+    passengers: int
+    yoy_pct: Optional[float]
+
+
+def extract_cumulative_figure(lead: str) -> Optional[CumulativeFigure]:
+    """A year-to-date total that starts in January ("handled 3,693,231 passengers in the first nine months").
+    Only totals starting in January qualify: they are what lets a missing month be derived (see
+    db.derive_bts_months_from_totals). Annual totals, rounded counts and other ranges are ignored."""
+    lead = re.split(r"More\.\.\.", lead, maxsplit=1)[0]
+    text = re.sub(r"\s+", " ", lead[:LEAD_CHARS]).strip()
+    through = None
+    for regex, to_month in _THROUGH_RES:
+        m = regex.search(text)
+        if m:
+            through = to_month(m)
+            break
+    if through is None or through < 2:
+        return None
+    for m in COUNT_RE.finditer(text):
+        window = text[max(0, m.start() - 60): m.end() + 60]
+        if not PASSENGER_NEAR_RE.search(window):
+            continue
+        passengers = int(re.sub(r"[,  ]", "", m.group(1)))
+        if (passengers < 100_000 or passengers % 1000 == 0
+                or APPROX_BEFORE_RE.search(text[max(0, m.start() - 20): m.start()])):
+            return None
+        yoy = None
+        for regex in (PCT_AFTER_RE, PCT_BEFORE_RE):
+            pm = regex.search(text)
+            if pm:
+                value = float(pm.group("num").replace(",", "."))
+                if value <= 1000:
+                    yoy = -value if pm.group("word").lower() in NEGATIVE_WORDS else value
+                    break
+        return CumulativeFigure(through_month=through, passengers=passengers, yoy_pct=yoy)
+    return None
+
+
 @dataclass
 class BtsCandidateRecord:
     airport_code: str
@@ -230,6 +283,38 @@ def scrape_news_candidates(year: int = 2026, max_pages: int = 4) -> list[BtsCand
         candidates.extend(new)
         time.sleep(1)  # be polite to a small airport website
     return candidates
+
+
+def parse_cumulative_page(html: str, url: str) -> list[dict]:
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text("\n", strip=True)
+    blocks = re.split(r"(?=\d{2}\.\s*\d{2}\.\s*\d{4}\s*[–-])", text)
+    out = []
+    for block in blocks:
+        date_match = re.match(r"(\d{2}\.\s*\d{2}\.\s*\d{4})", block)
+        if not date_match:
+            continue
+        lead = block[date_match.end():]
+        figure = extract_cumulative_figure(lead)
+        if figure is None:
+            continue
+        published = date_match.group(1)
+        out.append({"airport_code": "BTS", "published_date": published, "through_month": figure.through_month,
+                    "data_year": data_year(figure.through_month, published), "passengers": figure.passengers,
+                    "yoy_pct": figure.yoy_pct, "article_url": url,
+                    "context_sentence": re.sub(r"\s+", " ", lead[:300]).strip()})
+    return out
+
+
+def scrape_cumulative_figures(year: int = 2026, max_pages: int = 2) -> list[dict]:
+    """Year-to-date totals from the press releases (newest pages only: a total is useful right after it appears)."""
+    session = make_session()
+    found: list[dict] = []
+    for page in range(1, max_pages + 1):
+        url = f"{BASE}?page={page}&year={year}"
+        found.extend(parse_cumulative_page(fetch(url, session), url))
+        time.sleep(1)
+    return found
 
 
 def scrape_annual_stats() -> list[BtsAnnualRecord]:

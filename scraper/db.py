@@ -11,6 +11,7 @@ already used for OpenSky's scripts, and already set as a GitHub Actions secret).
 """
 
 import os
+import calendar
 import csv
 from pathlib import Path
 
@@ -169,6 +170,58 @@ def upsert_annual_report_monthly(conn, records: list[dict]) -> None:
             ],
         )
     conn.commit()
+
+
+def derive_month_from_total(through_month: int, total: int, known: dict) -> "int | None":
+    """Passengers of month `through_month` = year-to-date total minus the months before it.
+    Needs every earlier month; returns None when one is missing or the result is implausible."""
+    earlier = list(range(1, through_month))
+    if through_month < 2 or any(m not in known for m in earlier):
+        return None
+    month = total - sum(known[m] for m in earlier)
+    if month <= 0 or month > 2 * max(known.values()):
+        return None
+    return month
+
+
+def derive_bts_months_from_totals(conn, totals: list) -> int:
+    """BTS sometimes publishes only a year-to-date total for a month (e.g. 'first nine months of 2026').
+    The month is then total minus January..previous month, taken from the verified press-release months and,
+    where a month has none, from Eurostat (which equals the airport's own count for Bratislava).
+    Never overwrites an existing figure. Stored as verified=1 with the arithmetic in raw_text."""
+    stored = 0
+    for t in totals:
+        year, through = t["data_year"], t["through_month"]
+        with conn.cursor() as cur:
+            cur.execute("SELECT 1 FROM monthly_traffic WHERE airport_code='BTS' AND year=%s AND month=%s AND verified=1",
+                        (year, through))
+            if cur.fetchone():
+                continue
+            cur.execute("SELECT month, passengers FROM monthly_traffic WHERE airport_code='BTS' AND year=%s "
+                        "AND verified=1 AND month < %s", (year, through))
+            known = {m: p for m, p in cur.fetchall()}
+            try:
+                cur.execute("SELECT month, passengers FROM public.eurostat_monthly WHERE airport_code='BTS' "
+                            "AND year=%s AND month < %s", (year, through))
+                for m, p in cur.fetchall():
+                    known.setdefault(m, p)
+            except Exception:                 # table not created yet
+                conn.rollback()
+            value = derive_month_from_total(through, t["passengers"], known)
+            if value is None:
+                print(f"  cannot derive BTS month {through}/{year}: earlier months incomplete")
+                continue
+            earlier_sum = sum(known[m] for m in range(1, through))
+            raw = (f"derived: year-to-date total {t['passengers']:,} (BTS release {t['published_date']}) minus "
+                   f"January-{calendar.month_name[through - 1]} {earlier_sum:,} | {t['context_sentence']}")
+            cur.execute(
+                "INSERT INTO monthly_traffic (airport_code, year, month, passengers, verified, source_url, raw_text) "
+                "VALUES ('BTS', %s, %s, %s, 1, %s, %s) ON CONFLICT (airport_code, year, month) DO NOTHING",
+                (year, through, value, t["article_url"], raw))
+            stored += cur.rowcount
+            print(f"  derived BTS {year}-{through:02d}: {value:,}")
+        conn.commit()
+    return stored
 
 
 EUROSTAT_DDL = """

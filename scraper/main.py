@@ -55,6 +55,18 @@ def run() -> None:
     else:
         problems.append("BTS press-release scraper returned 0 monthly figures (page layout changed?)")
 
+    # Only if a month is missing: BTS sometimes publishes just a year-to-date total ("first nine months of 2026").
+    # The month is then that total minus the earlier months, and only when every earlier month is known;
+    # an existing figure is never overwritten (see db.derive_bts_months_from_totals).
+    try:
+        totals = bts_scraper.scrape_cumulative_figures(year=this_year)
+    except Exception as exc:
+        totals = []
+        print(f"  (year-to-date totals not read: {exc})")
+    if totals:
+        print(f"  {len(totals)} year-to-date total(s) found; deriving missing months")
+        db.derive_bts_months_from_totals(conn, totals)
+
     print("\n=== Eurostat monthly (fills months the airports did not publish) ===")
     try:
         euro = eurostat_monthly.scrape()

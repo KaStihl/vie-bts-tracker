@@ -120,3 +120,49 @@ def test_may_the_verb_is_not_the_month():
 ])
 def test_data_year_comes_from_the_publication_date(month, published, expected):
     assert data_year(month, published) == expected
+
+
+# ---- year-to-date totals -> a missing month (BTS 2026-10-12 published only "first nine months")
+from scraper.bts_scraper import extract_cumulative_figure, parse_cumulative_page
+from scraper.db import derive_month_from_total
+
+JAN_AUG_2026 = {1: 195_110, 2: 212_945, 3: 270_986, 4: 360_798, 5: 398_639, 6: 510_152, 7: 619_902, 8: 625_742}
+
+
+def test_cumulative_lead_is_read():
+    f = extract_cumulative_figure("– Bratislava M. R. Štefánik Airport handled a record 3,693,231 passengers in the "
+                                  "first nine months of 2026, representing a 99% increase compared with last year.")
+    assert (f.through_month, f.passengers, f.yoy_pct) == (9, 3_693_231, 99.0)
+
+
+def test_monthly_lead_is_not_a_cumulative_total():
+    assert extract_cumulative_figure("– Bratislava Airport recorded the busiest month in its history in August, "
+                                     "handling a total of 625,742 passengers.") is None
+
+
+def test_rounded_or_annual_totals_are_ignored():
+    assert extract_cumulative_figure("– The airport handled more than 3,000,000 passengers in the first nine months.") is None
+    assert extract_cumulative_figure("– The airport handled 2,438,215 passengers in 2025.") is None
+
+
+def test_missing_month_is_total_minus_earlier_months():
+    assert derive_month_from_total(9, 3_693_231, JAN_AUG_2026) == 498_957
+
+
+def test_no_derivation_when_an_earlier_month_is_missing():
+    known = {m: p for m, p in JAN_AUG_2026.items() if m != 4}
+    assert derive_month_from_total(9, 3_693_231, known) is None
+
+
+def test_implausible_result_is_rejected():
+    assert derive_month_from_total(9, 3_000_000, JAN_AUG_2026) is None            # negative
+    assert derive_month_from_total(9, 3_194_274 + 5_000_000, JAN_AUG_2026) is None  # absurdly large
+
+
+def test_page_parser_finds_the_total_with_data_year():
+    html = ("<p>12. 10. 2026 – Bratislava M. R. Štefánik Airport handled a record 3,693,231 passengers in the first "
+            "nine months of 2026, representing a 99% increase. More...</p>"
+            "<p>16. 09. 2026 – Bratislava Airport recorded the busiest month in its history in August, handling "
+            "625,742 passengers.</p>")
+    out = parse_cumulative_page(html, "https://example/")
+    assert [(o["data_year"], o["through_month"], o["passengers"]) for o in out] == [(2026, 9, 3_693_231)]
